@@ -54,7 +54,7 @@ const CrmForm = () => {
     const fetchOrganizations = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}v1/getAllOrgs`
+          `${process.env.REACT_APP_API_URL}/v1/getAllOrgs`
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.data)) {
@@ -72,7 +72,7 @@ const CrmForm = () => {
   const fetchBranch = async (organization) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}v1/getBranchbyOrganizationname/${organization}`
+        `${process.env.REACT_APP_API_URL}/v1/getBranchbyOrganizationname/${organization}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -165,10 +165,9 @@ const CrmForm = () => {
   const handleFormSubmit = async (values) => {
     setIsLoading(true);
     const formData = new FormData();
-    const sessionData = JSON.parse(sessionStorage.getItem("userDetails"));
-    const createrrole = sessionData?.extraind10 || "";
-    const createrid =
-      sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
+    const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
+    const createrrole = sessionData?.extraind10 || "hob";
+    const createrid = sessionData?.hobid || "";
     const password = (values.firstName || "") + (values.PhoneNo || "");
 
     formData.append("firstname", values.firstName || "");
@@ -209,7 +208,7 @@ const CrmForm = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/v1/createcrm`,
+        `${process.env.REACT_APP_API_URL}/v1/createcrm`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

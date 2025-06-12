@@ -33,3 +33,25 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+
+.custom-ant-table-header .ant-table-thead > tr > th {
+  background: #3e4396 !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove all header column dividers */
+.custom-ant-table-header .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  display: none !important;
+  background: none !important;
+  width: 0 !important;
+  content: none !important;
+}
+
+/* Remove default AntD table header bottom border for all tables */
+.ant-table-thead > tr > th {
+  border-bottom: none !important;
+}

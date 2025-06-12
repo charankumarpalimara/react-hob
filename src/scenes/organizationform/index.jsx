@@ -60,13 +60,13 @@ const OrganizationForm = () => {
     const getallOrganizations = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/v1/getAllOrgs`
+          `${process.env.REACT_APP_API_URL}/v1/getAllOrgs`
         );
         // If your API returns { data: [{ organizationname: "..." }, ...] }
         const orgs =
           response.data?.data?.map((o) => o.organizationname?.toLowerCase()) ||
           [];
-          Navigate("/organization");
+
         setExistingOrgs(orgs);
       } catch (error) {
         console.error("Error fetching organizations:", error);
@@ -77,9 +77,9 @@ const OrganizationForm = () => {
 
   const handleFormSubmit = async (values) => {
     setIsLoading(true);
-    const userDetails = JSON.parse(sessionStorage.getItem("userDetails")) || {};
-    const createrrole = userDetails.extraind10 || "admin";
-    const createrid = "1";
+    const userDetails = JSON.parse(sessionStorage.getItem("hobDetails")) || {};
+    const createrrole = userDetails.extraind10 || "hob";
+    const createrid = userDetails.hobid;
     try {
       for (const branch of branchInstances) {
         const formData = new FormData();
@@ -99,7 +99,7 @@ const OrganizationForm = () => {
         formData.append("createrid", createrid);
         formData.append("createrrole", createrrole);
         await axios.post(
-          `${process.env.REACT_APP_API_URL}api/api/v1/createOrganization`,
+          `${process.env.REACT_APP_API_URL}/v1/createOrganization`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -108,6 +108,7 @@ const OrganizationForm = () => {
       }
       // alert("Form Data Submitted Successfully");
       message.success("Organization Registered successfully!");
+            Navigate('/organization');
       form.resetFields();
       setBranchInstances([
         {
@@ -125,7 +126,8 @@ const OrganizationForm = () => {
           passwords: "",
         },
       ]);
-      // Navigate('/organization');
+
+
     } catch (error) {
       console.error("Error submitting form data:", error);
     } finally {

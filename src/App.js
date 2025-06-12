@@ -16,7 +16,7 @@ import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import Cm from "./scenes/cm";
-import Hob from "./scenes/hob";
+// import Hob from "./scenes/hob";
 import Crm from "./scenes/crm";
 import Organization from "./scenes/organization";
 // import Bar from "./scenes/bar";
@@ -33,7 +33,7 @@ import OrganizationDetails from "./scenes/organizationdetails";
 import Organizationadd from "./scenes/organizationdetails/organizationadd";
 import HobDetails from "./scenes/hobdetails";
 import TicketDetails from "./scenes/ticketsdetails";
-import HobForm from "./scenes/form";
+// import HobForm from "./scenes/form";
 import CmForm from "./scenes/cmform";
 import CrmForm from "./scenes/crmform";
 import BsuForm from "./scenes/bsuform";
@@ -46,6 +46,7 @@ import AllExperiences from "./scenes/experiences/allExperiences";
 import NewExperiences from "./scenes/experiences/newExperiences";
 import PendingExperiences from "./scenes/experiences/pendingExperiences";
 import ResolvedExperiences from "./scenes/experiences/resolvedExperiences";
+import TaskDetails from "./scenes/taskdetails";
 
 // const SOCKET_URL =
 //   process.env.REACT_APP_SOCKET_URL ||
@@ -197,12 +198,10 @@ function App() {
                 />
                 <Route path="/cm" element={<Cm />} />
                 <Route path="/crm" element={<Crm />} />
-                <Route path="/hob" element={<Hob />} />
     
                 <Route path="/organization" element={<Organization />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notes" element={<Notes />} />
-                <Route path="/form" element={<HobForm />} />
                 <Route path="/cmform" element={<CmForm />} />
                 <Route path="/crmform" element={<CrmForm />} />
                 <Route path="/bsuform" element={<BsuForm />} />
@@ -220,6 +219,7 @@ function App() {
                 <Route path="/organizationadd" element={<Organizationadd />} />
                 <Route path="/hobdetails" element={<HobDetails />} />
                 <Route path="/ticketdetails" element={<TicketDetails />} />
+                <Route path="/taskdetails" element={<TaskDetails />} />
                 {/* <Route path="/bar" element={<Bar />} /> */}
                 {/* <Route path="/pie" element={<Pie />} /> */}
                 <Route path="/line" element={<Line />} />

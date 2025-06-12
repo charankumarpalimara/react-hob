@@ -17,6 +17,7 @@ import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Country } from "country-state-city";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -37,6 +38,8 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
 
 const CmForm = () => {
   const [form] = Form.useForm();
+  const Navigate = useNavigate();
+  // const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [originalImage, setOriginalImage] = useState(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -55,7 +58,7 @@ const CmForm = () => {
     const fetchTickets = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}api/v1/getAllOrgs`
+          `${process.env.REACT_APP_API_URL}/v1/getAllOrgs`
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.data)) {
@@ -212,10 +215,9 @@ const CmForm = () => {
     formData.append("crmId", values.crmid || "");
     formData.append("crmName", values.crmname || "");
 
-    const sessionData = JSON.parse(sessionStorage.getItem("userDetails"));
-    const createrrole = sessionData?.extraind10 || "";
-    const createrid =
-      sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
+    const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
+    const createrrole = sessionData?.extraind10 || "hob";
+    const createrid = sessionData?.hobid || "";
     const password = (values.firstName || "") + (values.PhoneNo || "");
     formData.append("createrrole", createrrole);
     formData.append("createrid", createrid);
@@ -236,13 +238,14 @@ const CmForm = () => {
         console.error("Error converting image to blob:", error);
       }
     } else {
-      Modal.warning({ content: "Please upload a profile image." });
+      // Modal.warning({ content: "Please upload a profile image." });
+      message.warning("Please upload a profile image.");
       setIsLoading(false);
       return;
     }
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}api/v1/createCm`,
+        `${process.env.REACT_APP_API_URL}/v1/createCm`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -250,12 +253,14 @@ const CmForm = () => {
       );
       // Modal.success({ content: "CM Registered Successfully!" });
       message.success("CM Registered Successfully!");
+      Navigate("/cm"); // Redirect to CM List page
 
       form.resetFields();
       setProfileImage(null);
       setOriginalImage(null);
     } catch (error) {
-      Modal.error({ content: "Error submitting form" });
+      // Modal.error({ content: "Error submitting form" });
+      message.error("Error submitting form");
     } finally {
       setIsLoading(false);
     }
@@ -550,7 +555,7 @@ const CmForm = () => {
                   onChange={async (value) => {
                     try {
                       const res = await fetch(
-                        `${process.env.REACT_APP_API_URL}api/v1/getCrmNamebyId/${value}`
+                        `${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${value}`
                       );
                       const data = await res.json();
                       setCrmName(data.crmNames || "");

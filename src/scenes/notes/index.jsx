@@ -64,12 +64,11 @@ const Notes = () => {
   const fetchNotes = async () => {
     // setIsLoading(true);
     try {
-      const sessionData = JSON.parse(sessionStorage.getItem("userDetails"));
-      const createrid =
-        sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
+      const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
+      const createrid = sessionData?.hobid || "";
       // const userId = sessionStorage.getItem("adminid");
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/v1/noteGetByid/${createrid}`
+        `${process.env.REACT_APP_API_URL}/v1/noteGetByid/${createrid}`
       );
       setNotes(res.data.notes || []);
     } catch (err) {
@@ -95,10 +94,9 @@ const Notes = () => {
     }
     try {
       setIsLoading(true);
-      const sessionData = JSON.parse(sessionStorage.getItem("userDetails"));
-      const createrid =
-        sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
-      const createrrole = sessionData?.extraind10 || "";
+      const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
+      const createrid = sessionData?.hobid || "";
+      const createrrole = 'hob' || "";
 
       const payload = {
         createrid,
@@ -107,8 +105,10 @@ const Notes = () => {
         description,
       };
 
+      console.log("Payload:", payload);
+
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/v1/createNote`,
+        `${process.env.REACT_APP_API_URL}/v1/createNote`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -141,7 +141,7 @@ const Notes = () => {
         description: editDescription,
       };
       const res = await axios.put(
-        `${process.env.REACT_APP_API_URL}api/api/v1/UpdateNoteDetails/${editNote.id}`,
+        `${process.env.REACT_APP_API_URL}/v1/UpdateNoteDetails/${editNote.id}`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -167,7 +167,7 @@ const Notes = () => {
     try {
       setIsLoading(true);
       const res = await axios.delete(
-        `${process.env.REACT_APP_API_URL}api/api/v1/NoteDelete/${editNote.id}`
+        `${process.env.REACT_APP_API_URL}/v1/NoteDelete/${editNote.id}`
       );
       if (res.status === 200) {
         message.success(res.data?.message || "Note deleted successfully");
