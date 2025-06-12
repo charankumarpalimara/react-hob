@@ -1,0 +1,30 @@
+{
+  "name": "alentur-admin",
+  "version": "1.0.0",
+  "description": "Admin panel for managing organizations and branches.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "antd": "^4.16.13",
+    "country-state-city": "^2.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "http://example.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harshgaya/alentur-admin.git"
+  }
+}
