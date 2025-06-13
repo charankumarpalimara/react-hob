@@ -1,6 +1,7 @@
 {
-  "name": "react-admin",
+  "name": "react-hob",
   "version": "0.1.0",
+  "homepage": "/hob",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
