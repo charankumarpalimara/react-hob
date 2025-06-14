@@ -32,7 +32,7 @@ const Login = ({ onLogin }) => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/v1/hobLogin`,
-          // `http://127.0.0.1:8080/v1/hobLogin`,
+        // `http://127.0.0.1:8080/v1/hobLogin`,
         {
           method: "POST",
           headers: {
@@ -41,8 +41,6 @@ const Login = ({ onLogin }) => {
           body: JSON.stringify({ email, password }),
         }
       );
-
-
 
       const data = await response.json();
 
@@ -53,7 +51,7 @@ const Login = ({ onLogin }) => {
         onLogin();
         sessionStorage.setItem("token", data.token); // Save the authentication token
         sessionStorage.setItem("hobDetails", JSON.stringify(data.data)); // Save all user details in sessionStorage
-        navigate("/");
+        navigate("/hob");
       } else {
         setError(data.error || "Invalid credentials");
       }

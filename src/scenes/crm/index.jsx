@@ -175,11 +175,11 @@ const Crm = () => {
   }, []);
 
   const handleNewTicket = () => {
-    Navigate("/crmform");
+    Navigate("/hob/crmform");
   };
 
   const handleRowClick = (params) => {
-    Navigate("/crmdetails", { state: { ticket: params.row } });
+    Navigate("/hob/crmdetails", { state: { ticket: params.row } });
   };
 
   return (

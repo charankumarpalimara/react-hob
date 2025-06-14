@@ -168,7 +168,7 @@ const HobForm = () => {
       // Modal.success({ content: "Form Data Submitted Successfully" });
       console.log("Response:", response);
       message.success("Hob Registerd Successfully");
-      Navigate("/hob");
+      Navigate("/hob/hob");
     } catch (error) {
       Modal.error({ content: "Error submitting form data" });
     } finally {

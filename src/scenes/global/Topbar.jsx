@@ -1,4 +1,17 @@
-import { Box, IconButton, useTheme, Typography, useMediaQuery, Modal, Backdrop, ListItem, List, ListItemIcon, ListItemText, Drawer } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  useTheme,
+  Typography,
+  useMediaQuery,
+  Modal,
+  Backdrop,
+  ListItem,
+  List,
+  ListItemIcon,
+  ListItemText,
+  Drawer,
+} from "@mui/material";
 import { useState, useEffect } from "react";
 import { tokens } from "../../theme";
 import { Link, useLocation } from "react-router-dom";
@@ -14,13 +27,13 @@ import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 // import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 // import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import logoLight from "./logo.png";
 import { useNavigate } from "react-router-dom";
-import Badge from '@mui/material/Badge';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import Badge from "@mui/material/Badge";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 // Shared getActivePage function
 const getActivePage = (pathname) => {
@@ -34,7 +47,7 @@ const getActivePage = (pathname) => {
     return "/notes";
   } else if (pathname.includes("/calendar")) {
     return "/calendar";
-  }else if (pathname.includes("/tasks") || pathname.includes("/taskform")) {
+  } else if (pathname.includes("/tasks") || pathname.includes("/taskform")) {
     return "/tasks";
   } else if (pathname.includes("/organization")) {
     return "/organization";
@@ -86,7 +99,8 @@ const Item = ({ title, to, icon, selected, setSelected, handleClose }) => {
       <ListItemText
         primary={title}
         sx={{
-          "& .MuiTypography-root": { // Target the nested Typography component
+          "& .MuiTypography-root": {
+            // Target the nested Typography component
             fontWeight: "bold !important", // Ensure text is bold for selected item
             fontSize: "15px",
           },
@@ -96,7 +110,7 @@ const Item = ({ title, to, icon, selected, setSelected, handleClose }) => {
   );
 };
 
-const Topbar = ({ onLogout}) => {
+const Topbar = ({ onLogout }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,25 +120,23 @@ const Topbar = ({ onLogout}) => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const userDetails = JSON.parse(sessionStorage.getItem('userDetails')) || {}; // Retrieve user details from sessionStorage
-
-
+  const userDetails = JSON.parse(sessionStorage.getItem("userDetails")) || {}; // Retrieve user details from sessionStorage
 
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState('');
-    const [drawerOpen, setDrawerOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // WebSocket connection for live notifications
   useEffect(() => {
     // Replace with your actual WebSocket server URL
-    const ws = new WebSocket('ws://localhost:8080'); // <-- adjust if needed
+    const ws = new WebSocket("ws://localhost:8080"); // <-- adjust if needed
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'notification') {
+        if (data.type === "notification") {
           setNotifications((prev) => [data, ...prev]);
           setUnreadCount((prev) => prev + 1);
           setSnackbarMsg(data.message);
@@ -140,10 +152,9 @@ const Topbar = ({ onLogout}) => {
 
   const handleNotificationsClick = () => {
     setUnreadCount(0);
-        setDrawerOpen(true);
+    setDrawerOpen(true);
     // Optionally open a modal/dropdown with notifications
   };
-
 
   const getPageTitle = () => {
     switch (location.pathname) {
@@ -160,11 +171,11 @@ const Topbar = ({ onLogout}) => {
       case "/hob":
         return "Head of the Business";
       case "/tasks":
-          return "Tasks List";  
+        return "Tasks List";
       case "/taskdetails":
-          return "Task Details";  
+        return "Task Details";
       case "/taskform":
-            return "Create New Task";  
+        return "Create New Task";
       case "/crmdetails":
         return "Customer Relationship Manager Details";
       case "/cmdetails":
@@ -206,9 +217,15 @@ const Topbar = ({ onLogout}) => {
       case "/cm":
         return { primaryTitle: "Customer Manager", secondaryTitle: null };
       case "/crm":
-        return { primaryTitle: "Customer Relationship Manager", secondaryTitle: null };
+        return {
+          primaryTitle: "Customer Relationship Manager",
+          secondaryTitle: null,
+        };
       case "/cmdetails":
-        return { primaryTitle: "Customer Manager Details ", secondaryTitle: null };
+        return {
+          primaryTitle: "Customer Manager Details ",
+          secondaryTitle: null,
+        };
       case "/organization":
         return { primaryTitle: "Organization", secondaryTitle: null };
       case "/ticketdetails":
@@ -216,29 +233,50 @@ const Topbar = ({ onLogout}) => {
       case "/organizationdetails":
         return { primaryTitle: "Organizations Details", secondaryTitle: null };
       case "/organizationform":
-        return { primaryTitle: "Organization", secondaryTitle: "Create a New Organization" };
+        return {
+          primaryTitle: "Organization",
+          secondaryTitle: "Create a New Organization",
+        };
       case "/cmform":
-        return { primaryTitle: "Customer Manager", secondaryTitle: "Create a New Customer Manager" };
+        return {
+          primaryTitle: "Customer Manager",
+          secondaryTitle: "Create a New Customer Manager",
+        };
       case "/crmdetails":
-        return { primaryTitle: "Customer Relationship Manager Details ", secondaryTitle: null };
+        return {
+          primaryTitle: "Customer Relationship Manager Details ",
+          secondaryTitle: null,
+        };
       case "/crmform":
-        return { primaryTitle: "Customer Relationship Manager", secondaryTitle: "Create a New Customer Relationship Manager" };
+        return {
+          primaryTitle: "Customer Relationship Manager",
+          secondaryTitle: "Create a New Customer Relationship Manager",
+        };
       case "/hob":
         return { primaryTitle: "Head of the Business", secondaryTitle: null };
       case "/tasks":
         return { primaryTitle: "Tasks List", secondaryTitle: null };
       case "/taskform":
-        return { primaryTitle: "Tasks List", secondaryTitle: "Create a New Task" };  
+        return {
+          primaryTitle: "Tasks List",
+          secondaryTitle: "Create a New Task",
+        };
       case "/taskdetails":
-        return { primaryTitle: "Task Details", secondaryTitle: null };  
+        return { primaryTitle: "Task Details", secondaryTitle: null };
       case "/form":
-        return { primaryTitle: "Head of the Business", secondaryTitle: "Create a New Head of the Business Unit" };
+        return {
+          primaryTitle: "Head of the Business",
+          secondaryTitle: "Create a New Head of the Business Unit",
+        };
       case "/hobdetails":
-        return { primaryTitle: "Head of The Business Details", secondaryTitle: null };
+        return {
+          primaryTitle: "Head of The Business Details",
+          secondaryTitle: null,
+        };
       case "/allExperiences":
-        return { primaryTitle: "All Experiences", secondaryTitle: null  };
+        return { primaryTitle: "All Experiences", secondaryTitle: null };
       case "/newExperiences":
-        return { primaryTitle: "New Experiences", secondaryTitle: null  };
+        return { primaryTitle: "New Experiences", secondaryTitle: null };
       case "/pendingExperiences":
         return { primaryTitle: "Pending Experiences", secondaryTitle: null };
       case "/resolvedExperiences":
@@ -253,7 +291,6 @@ const Topbar = ({ onLogout}) => {
         return { primaryTitle: "Page Not Found", secondaryTitle: null };
     }
   };
-
 
   const { primaryTitle, secondaryTitle } = getPageTitle1();
 
@@ -270,7 +307,10 @@ const Topbar = ({ onLogout}) => {
 
   useEffect(() => {
     setSelected(getActivePage(location.pathname));
-    sessionStorage.setItem("selectedSidebarItem", getActivePage(location.pathname));
+    sessionStorage.setItem(
+      "selectedSidebarItem",
+      getActivePage(location.pathname)
+    );
   }, [location.pathname]);
 
   const logoSrc = logoLight;
@@ -289,7 +329,14 @@ const Topbar = ({ onLogout}) => {
   }, []);
 
   const CustomDivider = () => (
-    <Box sx={{ width: "20px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <Box
+      sx={{
+        width: "20px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <FontAwesomeIcon icon={faAngleRight} /> {/* Custom divider icon */}
     </Box>
   );
@@ -297,25 +344,23 @@ const Topbar = ({ onLogout}) => {
   // const handleLogout = () => {
   //   // Clear the token from localStorage
   //   localStorage.removeItem('token');
-    
+
   //   // Call the parent logout handler if provided
   //   if (onLogout) onLogout();
-    
+
   //   // Navigate to login page
   //   navigate('/login');
-    
+
   //   // Optional: Force a full page reload to reset the application state
 
   // };
 
-  const handleLogout = () => { 
-
-    sessionStorage.removeItem('token');
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
     onLogout();
     window.location.reload();
-    navigate('/login');
-  }
-
+    navigate("/hob/login");
+  };
 
   return (
     <Box
@@ -331,7 +376,13 @@ const Topbar = ({ onLogout}) => {
         flexDirection="column"
         width="100%"
         bgcolor="#ffffff"
-        sx={{ overflowX: "hidden", flex: 1, marginTop: 1, background: "ffffff", backgroundColor: "#ffffff" }}
+        sx={{
+          overflowX: "hidden",
+          flex: 1,
+          marginTop: 1,
+          background: "ffffff",
+          backgroundColor: "#ffffff",
+        }}
       >
         {/* Header Section */}
         {isMobile && (
@@ -349,7 +400,13 @@ const Topbar = ({ onLogout}) => {
             }}
           >
             {/* Logo on Mobile */}
-            <Box sx={{ maxWidth: "200px", height: "65px", backgroundColor: "#fefefe !important" }}>
+            <Box
+              sx={{
+                maxWidth: "200px",
+                height: "65px",
+                backgroundColor: "#fefefe !important",
+              }}
+            >
               <img
                 src={logoSrc}
                 alt="logo"
@@ -396,9 +453,16 @@ const Topbar = ({ onLogout}) => {
               {/* <Typography sx={{ color: "#8d8d8d", fontSize: isMobile ? "30px" : "25px" }}>
                 {getGreeting()} Delphin
               </Typography> */}
-              <Typography sx={{ color: "#8d8d8d", fontSize: isMobile ? "16px" : "16px" }}>
+              <Typography
+                sx={{ color: "#8d8d8d", fontSize: isMobile ? "16px" : "16px" }}
+              >
                 {currentTime.toLocaleString("en-US", {
-                  month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", hour12: true
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
                 })}
               </Typography>
             </Box>
@@ -412,8 +476,7 @@ const Topbar = ({ onLogout}) => {
                 alignItems: "center",
               }}
             >
-
-              <IconButton  sx={{ gap: 1 }} onClick={handleNotificationsClick} >
+              <IconButton sx={{ gap: 1 }} onClick={handleNotificationsClick}>
                 <Box
                   sx={{
                     width: isMobile ? 25 : 30,
@@ -425,14 +488,18 @@ const Topbar = ({ onLogout}) => {
                     justifyContent: "center",
                   }}
                 >
-                 <NotificationsIcon sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }} />
-
+                  <NotificationsIcon
+                    sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }}
+                  />
                 </Box>
                 {/* <Typography sx={{ color: "#000", fontSize: isMobile ? 15 : 17 }}>
                   Delphin
                 </Typography> */}
               </IconButton>
-              <IconButton onClick={() => navigate("profile")} sx={{ gap: 1 }}>
+              <IconButton
+                onClick={() => navigate("/hob/profile")}
+                sx={{ gap: 1 }}
+              >
                 <Box
                   sx={{
                     width: isMobile ? 25 : 30,
@@ -444,9 +511,13 @@ const Topbar = ({ onLogout}) => {
                     justifyContent: "center",
                   }}
                 >
-                  <PersonIcon sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }} />
+                  <PersonIcon
+                    sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }}
+                  />
                 </Box>
-                <Typography sx={{ color: "#000", fontSize: isMobile ? 15 : 17 }}>
+                <Typography
+                  sx={{ color: "#000", fontSize: isMobile ? 15 : 17 }}
+                >
                   {userDetails.firstname} {userDetails.lastname}
                 </Typography>
               </IconButton>
@@ -482,9 +553,16 @@ const Topbar = ({ onLogout}) => {
               {/* <Typography sx={{ color: "#8d8d8d", fontSize: isMobile ? "20px" : "25px" }}>
                 {getGreeting()} Delphin
               </Typography> */}
-              <Typography sx={{ color: "#8d8d8d", fontSize: isMobile ? "14px" : "16px" }}>
+              <Typography
+                sx={{ color: "#8d8d8d", fontSize: isMobile ? "14px" : "16px" }}
+              >
                 {currentTime.toLocaleString("en-US", {
-                  month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", hour12: true
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
                 })}
               </Typography>
             </Box>
@@ -498,24 +576,29 @@ const Topbar = ({ onLogout}) => {
                 alignItems: "center",
               }}
             >
-       <IconButton sx={{ gap: 1 }} onClick={handleNotificationsClick}>
-          <Badge badgeContent={unreadCount} color="error">
-            <Box
-              sx={{
-                width: isMobile ? 25 : 30,
-                height: isMobile ? 25 : 30,
-                borderRadius: "50%",
-                backgroundColor: colors.blueAccent[500],
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <NotificationsIcon sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }} />
-            </Box>
-          </Badge>
-        </IconButton>
-              <IconButton onClick={() => navigate("profile")} sx={{ gap: 1 }}>
+              <IconButton sx={{ gap: 1 }} onClick={handleNotificationsClick}>
+                <Badge badgeContent={unreadCount} color="error">
+                  <Box
+                    sx={{
+                      width: isMobile ? 25 : 30,
+                      height: isMobile ? 25 : 30,
+                      borderRadius: "50%",
+                      backgroundColor: colors.blueAccent[500],
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <NotificationsIcon
+                      sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }}
+                    />
+                  </Box>
+                </Badge>
+              </IconButton>
+              <IconButton
+                onClick={() => navigate("/hob/profile")}
+                sx={{ gap: 1 }}
+              >
                 <Box
                   sx={{
                     width: isMobile ? 25 : 30,
@@ -526,23 +609,31 @@ const Topbar = ({ onLogout}) => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                 > 
-                  <PersonIcon sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }} />
+                >
+                  <PersonIcon
+                    sx={{ fontSize: isMobile ? 18 : 20, color: "#fff" }}
+                  />
                 </Box>
-                <Typography sx={{ color: "#000", fontSize: isMobile ? 15 : 17 }}>
+                <Typography
+                  sx={{ color: "#000", fontSize: isMobile ? 15 : 17 }}
+                >
                   {userDetails.firstname} {userDetails.lastname}
                 </Typography>
               </IconButton>
               <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} severity="info" sx={{ width: '100%' }}>
-          {snackbarMsg}
-        </Alert>
-      </Snackbar>
+                open={snackbarOpen}
+                autoHideDuration={4000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                <Alert
+                  onClose={() => setSnackbarOpen(false)}
+                  severity="info"
+                  sx={{ width: "100%" }}
+                >
+                  {snackbarMsg}
+                </Alert>
+              </Snackbar>
             </Box>
           </Box>
         )}
@@ -575,12 +666,25 @@ const Topbar = ({ onLogout}) => {
                 textAlign: isMobile ? "text" : "text",
               }}
             >
-              <Typography sx={{ color: "#ffffff", fontSize: isMobile ? "20px" : "20px", fontWeight:"bold" }}>
+              <Typography
+                sx={{
+                  color: "#ffffff",
+                  fontSize: isMobile ? "20px" : "20px",
+                  fontWeight: "bold",
+                }}
+              >
                 {getPageTitle()}
               </Typography>
-              <Box sx={{ color: "#ffffff", alignItems: "center", gap: 1, display: "flex" }}>
+              <Box
+                sx={{
+                  color: "#ffffff",
+                  alignItems: "center",
+                  gap: 1,
+                  display: "flex",
+                }}
+              >
                 <HomeOutlinedIcon
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/hob")}
                   fontSize="small"
                   sx={{ cursor: "pointer" }}
                 />
@@ -615,19 +719,42 @@ const Topbar = ({ onLogout}) => {
                 paddingLeft: isMobile ? "12px" : "20px",
               }}
             >
-              <Typography sx={{ color: "#ffffff", fontSize: isMobile ? "17px" : "20px", fontWeight:"bold" }}>
+              <Typography
+                sx={{
+                  color: "#ffffff",
+                  fontSize: isMobile ? "17px" : "20px",
+                  fontWeight: "bold",
+                }}
+              >
                 {primaryTitle}
               </Typography>
-              <Box sx={{ color: "#ffffff", alignItems: "center", gap: 1, display: "flex" }}>
-                <HomeOutlinedIcon onClick={() => navigate("/")} fontSize="small" sx={{ cursor: "pointer" }} />
+              <Box
+                sx={{
+                  color: "#ffffff",
+                  alignItems: "center",
+                  gap: 1,
+                  display: "flex",
+                }}
+              >
+                <HomeOutlinedIcon
+                  onClick={() => navigate("/hob")}
+                  fontSize="small"
+                  sx={{ cursor: "pointer" }}
+                />
                 <CustomDivider />
-                <Typography sx={{ cursor: "pointer", fontSize:"14px" }} onClick={ secondaryTitle ? () => navigate(-1) : undefined}>
+                <Typography
+                  sx={{ cursor: "pointer", fontSize: "14px" }}
+                  onClick={secondaryTitle ? () => navigate(-1) : undefined}
+                >
                   {primaryTitle}
                 </Typography>
                 {secondaryTitle && (
                   <>
                     <CustomDivider />
-                    <Typography sx={{ cursor: "pointer" ,  fontSize:"14px"}} onClick={() => navigate(location.pathname)}>
+                    <Typography
+                      sx={{ cursor: "pointer", fontSize: "14px" }}
+                      onClick={() => navigate(location.pathname)}
+                    >
                       {secondaryTitle}
                     </Typography>
                   </>
@@ -639,45 +766,49 @@ const Topbar = ({ onLogout}) => {
       </Box>
 
       <Drawer
-  anchor="left"
-  open={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
->
-  <Box
-    sx={{ width: isMobile ? 250 : 350, padding: 2 }}
-    role="presentation"
-  >
-    <Typography variant="h6" sx={{ mb: 2 }}>
-      Notifications
-    </Typography>
-    <List>
-      {notifications.length === 0 && (
-        <ListItem>
-          <ListItemText primary="No notifications yet." />
-        </ListItem>
-      )}
-      {notifications.map((notif, idx) => (
-        <ListItem key={idx} divider>
-          <ListItemText
-            primary={notif.title || "Notification"}
-            secondary={
-              <>
-                <span>{notif.message}</span>
-                <br />
-                <span style={{ fontSize: 12, color: "#888" }}>
-                  {notif.timestamp ? new Date(notif.timestamp).toLocaleString() : ""}
-                </span>
-              </>
-            }
-          />
-        </ListItem>
-      ))}
-    </List>
-  </Box>
-</Drawer>
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box
+          sx={{ width: isMobile ? 250 : 350, padding: 2 }}
+          role="presentation"
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Notifications
+          </Typography>
+          <List>
+            {notifications.length === 0 && (
+              <ListItem>
+                <ListItemText primary="No notifications yet." />
+              </ListItem>
+            )}
+            {notifications.map((notif, idx) => (
+              <ListItem key={idx} divider>
+                <ListItemText
+                  primary={notif.title || "Notification"}
+                  secondary={
+                    <>
+                      <span>{notif.message}</span>
+                      <br />
+                      <span style={{ fontSize: 12, color: "#888" }}>
+                        {notif.timestamp
+                          ? new Date(notif.timestamp).toLocaleString()
+                          : ""}
+                      </span>
+                    </>
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
       <Box sx={{ alignItems: "center" }}>
         {/* Mobile Sidebar Modal */}
-        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}
+        <Modal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -705,40 +836,82 @@ const Topbar = ({ onLogout}) => {
               boxShadow: "4px 0px 8px rgba(0, 0, 0, 0.2)",
             }}
           >
-            <Item title="Dashboard" to="/" icon={<HomeOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} />
-            <Item title="Customer Manager" to="/cm" icon={<PeopleAltOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} />
-            <Item title="Customer Relationship Manager" to="/crm" icon={<HandshakeOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} />
+            <Item
+              title="Dashboard"
+              to="/"
+              icon={<HomeOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              handleClose={() => setIsModalOpen(false)}
+            />
+            <Item
+              title="Customer Manager"
+              to="/cm"
+              icon={<PeopleAltOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              handleClose={() => setIsModalOpen(false)}
+            />
+            <Item
+              title="Customer Relationship Manager"
+              to="/crm"
+              icon={<HandshakeOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              handleClose={() => setIsModalOpen(false)}
+            />
             {/* <Item title="Head of the Business" to="/hob" icon={<StorefrontOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} /> */}
-            <Item title="Organization" to="/organization" icon={<BusinessOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} />
+            <Item
+              title="Organization"
+              to="/organization"
+              icon={<BusinessOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              handleClose={() => setIsModalOpen(false)}
+            />
             {/* <Item title="Tasks" to="/tasks" icon={<TaskOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} /> */}
-            <Item title="Notes" to="/notes" icon={<DescriptionOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} />
-            <Item title="Calendar" to="/calendar" icon={<CalendarTodayOutlinedIcon />} selected={selected} setSelected={setSelected} handleClose={() => setIsModalOpen(false)} />
+            <Item
+              title="Notes"
+              to="/notes"
+              icon={<DescriptionOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              handleClose={() => setIsModalOpen(false)}
+            />
+            <Item
+              title="Calendar"
+              to="/calendar"
+              icon={<CalendarTodayOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              handleClose={() => setIsModalOpen(false)}
+            />
             <ListItem
-            button
-            onClick={handleLogout}
-            sx={{
-              color: colors.blueAccent[500],
-              borderRadius: "10px",
-              marginBottom: "8px",
-              "&:hover": {
-                backgroundColor: colors.blueAccent[700],
-                color: "white",
-              },
-            }}
-          >
-            <ListItemIcon sx={{ color: "inherit" }}>
-              <LogoutOutlinedIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Logout"
+              button
+              onClick={handleLogout}
               sx={{
-                "& .MuiTypography-root": {
-                  fontWeight: "bold !important",
-                  fontSize: "15px",
+                color: colors.blueAccent[500],
+                borderRadius: "10px",
+                marginBottom: "8px",
+                "&:hover": {
+                  backgroundColor: colors.blueAccent[700],
+                  color: "white",
                 },
               }}
-            />
-          </ListItem>
+            >
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <LogoutOutlinedIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Logout"
+                sx={{
+                  "& .MuiTypography-root": {
+                    fontWeight: "bold !important",
+                    fontSize: "15px",
+                  },
+                }}
+              />
+            </ListItem>
           </Box>
         </Modal>
       </Box>

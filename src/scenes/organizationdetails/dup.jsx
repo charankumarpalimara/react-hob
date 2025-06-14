@@ -146,7 +146,7 @@ const OrganizationDetails = () => {
         createrrole,
       };
       await axios.post(
-        "http://localhost:8080/api/v1/UpdateOrganizationDetails",
+        `${process.env.REACT_APP_API_URL}/v1/UpdateOrganizationDetails`,
         payload,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -155,7 +155,7 @@ const OrganizationDetails = () => {
       setEditMode(false);
       setOriginalBranch(null);
 
-      Navigate("/organization");
+      Navigate("/hob/organization");
     } catch (error) {
       console.error("Error submitting form data:", error);
     } finally {
@@ -538,7 +538,9 @@ const OrganizationDetails = () => {
         <Box display="flex" justifyContent="flex-start" mt="10px" gap="10px">
           <Button
             type="dashed"
-            onClick={() => Navigate("/organizationadd", { state: { ticket } })}
+            onClick={() =>
+              Navigate("/hob/organizationadd", { state: { ticket } })
+            }
             style={{ padding: "8px 16px", borderRadius: 8, fontWeight: 600 }}
           >
             + Add Branch

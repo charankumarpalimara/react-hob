@@ -1,5 +1,3 @@
-
-
 import {
   Box,
   useMediaQuery,
@@ -18,16 +16,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import download from "downloadjs";
 import { Table } from "antd";
 import {
-//   FormatBold,
-//   FormatItalic,
-//   FormatUnderlined,
-//   FormatListNumbered,
-//   FormatListBulleted,
+  //   FormatBold,
+  //   FormatItalic,
+  //   FormatUnderlined,
+  //   FormatListNumbered,
+  //   FormatListBulleted,
   InsertPhoto,
-//   TableChart,
-//   YouTube,
-//   Check as CheckIcon,
-//   Delete as DeleteIcon,
+  //   TableChart,
+  //   YouTube,
+  //   Check as CheckIcon,
+  //   Delete as DeleteIcon,
   // Add as AddIcon,
 } from "@mui/icons-material";
 // import { useEditor, EditorContent } from "@tiptap/react";
@@ -129,8 +127,6 @@ const TicketDetails = () => {
 
   const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
 
-
-
   // Chat fetch
   useEffect(() => {
     const fetchMessages = async () => {
@@ -173,8 +169,7 @@ const TicketDetails = () => {
   //   onUpdate: ({ editor }) => setNewMessage(editor.getHTML()),
   // });
 
-
-    if (!ticket || Object.keys(ticket).length === 0) {
+  if (!ticket || Object.keys(ticket).length === 0) {
     return <Typography color="error">No ticket data found.</Typography>;
   }
 
@@ -204,7 +199,6 @@ const TicketDetails = () => {
       key: "status",
       width: 150,
     },
-
   ];
 
   // Helpers
@@ -340,7 +334,7 @@ const TicketDetails = () => {
 
   // Table row click
   const handleRowClick = (params) => {
-    navigate("/taskdetails", { state: { ticket: params.row } });
+    navigate("/hob/taskdetails", { state: { ticket: params.row } });
   };
 
   // Styles
@@ -417,89 +411,146 @@ const TicketDetails = () => {
               >
                 {/* Ticket Details Fields */}
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Experience ID
                   </Typography>
                   <Typography>{values.id}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Organization
                   </Typography>
                   <Typography>{values.organization}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Branch
                   </Typography>
                   <Typography>{values.branch}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Customer Manager
                   </Typography>
                   <Typography>{values.cmname}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Customer Relationship Manager
                   </Typography>
                   <Typography>{values.crmname}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Priority
                   </Typography>
-                  <Typography sx={{ color: getExperienceColor(values.priority) }}>
+                  <Typography
+                    sx={{ color: getExperienceColor(values.priority) }}
+                  >
                     {values.priority}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Status
                   </Typography>
-                  <Typography sx={{ color: getExperienceColor(values.priority) }}>
+                  <Typography
+                    sx={{ color: getExperienceColor(values.priority) }}
+                  >
                     {values.status}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Date
                   </Typography>
                   <Typography>{values.date}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Time
                   </Typography>
                   <Typography>{values.time}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Experience
                   </Typography>
-                  <Typography sx={{ color: getExperienceColor(values.experience) }}>
+                  <Typography
+                    sx={{ color: getExperienceColor(values.experience) }}
+                  >
                     {values.experience}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Impact
                   </Typography>
                   <Typography>{values.department}</Typography>
                 </Box>
-                <Box sx={{ gridColumn: { xs: "auto", sm: "span 2", md: "span 3" } }}>
-                  <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                <Box
+                  sx={{
+                    gridColumn: { xs: "auto", sm: "span 2", md: "span 3" },
+                  }}
+                >
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "#555", fontWeight: "bold" }}
+                  >
                     Subject
                   </Typography>
                   <Typography>{values.subject}</Typography>
                 </Box>
               </Box>
-              <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box
+                sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}
+              >
                 {/* Request Details Section */}
                 <Box>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <Typography variant="subtitle2" sx={{ color: "#555", fontWeight: "bold" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: "#555", fontWeight: "bold" }}
+                    >
                       Request Details
                     </Typography>
                   </Box>
@@ -522,8 +573,19 @@ const TicketDetails = () => {
                     border: "1px solid #ccc",
                   }}
                 >
-                  <Box component="label" htmlFor="fileInput" sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                    <InsertPhoto fontSize="small" sx={{ marginRight: "8px", color: "#555" }} />
+                  <Box
+                    component="label"
+                    htmlFor="fileInput"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <InsertPhoto
+                      fontSize="small"
+                      sx={{ marginRight: "8px", color: "#555" }}
+                    />
                     <Typography variant="body2">
                       {selectedFile ? selectedFile.name : "Attach Files"}
                     </Typography>
@@ -736,7 +798,7 @@ const TicketDetails = () => {
           </Button>
         </Box> */}
         <Table
-            className="custom-ant-table-header"
+          className="custom-ant-table-header"
           columns={antColumns}
           dataSource={initialTickets}
           rowKey="id"

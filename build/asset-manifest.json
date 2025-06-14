@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/hob/static/css/main.271c0be5.css",
-    "main.js": "/hob/static/js/main.28c22ce6.js",
+    "main.js": "/hob/static/js/main.125200a9.js",
     "static/media/logo.png": "/hob/static/media/logo.5311861d2018c5f4ae2d.png",
     "static/media/poppins-devanagari-400-normal.woff": "/hob/static/media/poppins-devanagari-400-normal.421fe9869ff4b58e2d7b.woff",
     "static/media/poppins-devanagari-300-normal.woff": "/hob/static/media/poppins-devanagari-300-normal.62c0b320ffa12beb056b.woff",
@@ -37,6 +37,6 @@
   },
   "entrypoints": [
     "static/css/main.271c0be5.css",
-    "static/js/main.28c22ce6.js"
+    "static/js/main.125200a9.js"
   ]
 }

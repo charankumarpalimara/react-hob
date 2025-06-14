@@ -167,11 +167,11 @@ const Organization = () => {
   }, []);
 
   const handleNewTicket = () => {
-    Navigate("/organizationform");
+    Navigate("/hob/organizationform");
   };
 
   const handleRowClick = (params) => {
-    Navigate("/organizationdetails", { state: { ticket: params.row } });
+    Navigate("/hob/organizationdetails", { state: { ticket: params.row } });
   };
 
   return (

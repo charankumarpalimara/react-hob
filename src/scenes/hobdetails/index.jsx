@@ -1,10 +1,22 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Form, Input, Select, Button, Row, Col, Avatar, Modal, Typography, message, Spin } from 'antd';
-import { CameraOutlined } from '@ant-design/icons';
-import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-import { Country, State } from 'country-state-city';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Row,
+  Col,
+  Avatar,
+  Modal,
+  Typography,
+  message,
+  Spin,
+} from "antd";
+import { CameraOutlined } from "@ant-design/icons";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import { Country, State } from "country-state-city";
+import { useLocation, useNavigate } from "react-router-dom";
 // import {  } from "react-router-dom";
 
 const { Text } = Typography;
@@ -15,7 +27,7 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   const cropX = (mediaWidth - cropWidth) / 2;
   const cropY = (mediaHeight - cropHeight) / 2;
   return {
-    unit: '%',
+    unit: "%",
     x: (cropX / mediaWidth) * 100,
     y: (cropY / mediaHeight) * 100,
     width: (cropWidth / mediaWidth) * 100,
@@ -41,61 +53,67 @@ const HobDetails = () => {
 
   // Use localTicket state for all ticket data
   const [localTicket, setLocalTicket] = useState(() => {
-    const stored = localStorage.getItem('hob_ticket');
-    return stored ? JSON.parse(stored) : (location.state?.ticket || {});
+    const stored = localStorage.getItem("hob_ticket");
+    return stored ? JSON.parse(stored) : location.state?.ticket || {};
   });
   // const [localTicket, setLocalTicket] = useState(location.state?.ticket || {});
 
   useEffect(() => {
     if (localTicket.country) {
-      const country = Country.getAllCountries().find((c) => c.name === localTicket.country);
+      const country = Country.getAllCountries().find(
+        (c) => c.name === localTicket.country
+      );
       setSelectedCountry(country || null);
     }
     if (localTicket.state && selectedCountry) {
-      const state = State.getStatesOfCountry(selectedCountry.isoCode).find((s) => s.name === localTicket.state);
+      const state = State.getStatesOfCountry(selectedCountry.isoCode).find(
+        (s) => s.name === localTicket.state
+      );
       setSelectedState(state || null);
     }
   }, [localTicket, selectedCountry, selectedState]);
 
-  const initialValues = useMemo(() => ({
-    hobid: localTicket.hobid || "",
-    firstName: localTicket.firstname || "",
-    lastName: localTicket.lastname || '',
-    street: localTicket.street || '',
-    status: localTicket.status || '',
-    email: localTicket.email || '',
-    PhoneNo: localTicket.mobile || '',
-    phoneCode: localTicket.phonecode || '',
-    organization0: localTicket.organization || '',
-    customerManager0: localTicket.customermanager || '',
-    gender: localTicket.gender || '',
-    imageUrl: localTicket.imageUrl || '',
-  }), [localTicket]);
+  const initialValues = useMemo(
+    () => ({
+      hobid: localTicket.hobid || "",
+      firstName: localTicket.firstname || "",
+      lastName: localTicket.lastname || "",
+      street: localTicket.street || "",
+      status: localTicket.status || "",
+      email: localTicket.email || "",
+      PhoneNo: localTicket.mobile || "",
+      phoneCode: localTicket.phonecode || "",
+      organization0: localTicket.organization || "",
+      customerManager0: localTicket.customermanager || "",
+      gender: localTicket.gender || "",
+      imageUrl: localTicket.imageUrl || "",
+    }),
+    [localTicket]
+  );
 
   // const [form] = Form.useForm();
 
-
-
-const handleFormSubmit = async (values) => {
+  const handleFormSubmit = async (values) => {
     setIsLoading(true);
     const formData = new FormData();
-    formData.append('hobid', values.hobid);
-    formData.append('firstname', values.firstName);
-    formData.append('lastname', values.lastName);
-    formData.append('email', values.email);
-    formData.append('phoneCode', values.phoneCode);
-    formData.append('mobile', values.PhoneNo);
-    formData.append('gender', values.gender);
-    formData.append('status', values.status);
+    formData.append("hobid", values.hobid);
+    formData.append("firstname", values.firstName);
+    formData.append("lastname", values.lastName);
+    formData.append("email", values.email);
+    formData.append("phoneCode", values.phoneCode);
+    formData.append("mobile", values.PhoneNo);
+    formData.append("gender", values.gender);
+    formData.append("status", values.status);
 
     const sessionData = JSON.parse(sessionStorage.getItem("userDetails"));
     const createrrole = sessionData?.extraind10 || "";
-    const createrid = sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
+    const createrid =
+      sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
     formData.append("createrrole", createrrole);
     formData.append("createrid", createrid);
 
     if (profileImage) {
-      const arr = profileImage.split(',');
+      const arr = profileImage.split(",");
       const mime = arr[0].match(/:(.*?);/)[1];
       const bstr = atob(arr[1]);
       let n = bstr.length;
@@ -104,15 +122,18 @@ const handleFormSubmit = async (values) => {
         u8arr[n] = bstr.charCodeAt(n);
       }
       const file = new Blob([u8arr], { type: mime });
-      formData.append('hobProfileImage', file, 'profile.jpg');
+      formData.append("hobProfileImage", file, "profile.jpg");
     }
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/v1/UpdateHobDetails`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/v1/UpdateHobDetails`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       // const data = await response.json();
-  const data = await response.json();
+      const data = await response.json();
       if (response.ok) {
         setIsLoading(false);
         // const updatedTicket = {
@@ -142,21 +163,20 @@ const handleFormSubmit = async (values) => {
         //   gender: updatedTicket.gender,
         //   imageUrl: updatedTicket.imageUrl,
         // });
-        message.success('Hob details updated successfully');
+        message.success("Hob details updated successfully");
         setIsEditing(false);
-        Navigate('/hob'); // Redirect to all Hobs page
+        Navigate("/hob/hob"); // Redirect to all Hobs page
       } else {
-        alert('Update failed: ' + (data?.error || response.statusText));
+        alert("Update failed: " + (data?.error || response.statusText));
       }
     } catch (error) {
-      alert('Error submitting form');
+      alert("Error submitting form");
     }
   };
 
   useEffect(() => {
     form.setFieldsValue(initialValues);
   }, [form, initialValues]);
-
 
   // const handleFormSubmit = (values) => {
   //   // const formData = { ...values, profileImage: profileImage };
@@ -194,12 +214,12 @@ const handleFormSubmit = async (values) => {
   const handleCropImage = async () => {
     if (!completedCrop || !imgRef.current) return;
     const image = imgRef.current;
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
     canvas.width = completedCrop.width;
     canvas.height = completedCrop.height;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(
       image,
@@ -213,15 +233,19 @@ const handleFormSubmit = async (values) => {
       completedCrop.height
     );
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProfileImage(reader.result);
-          resolve(reader.result);
-        };
-        reader.readAsDataURL(blob);
-      }, 'image/jpeg', 0.9);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setProfileImage(reader.result);
+            resolve(reader.result);
+          };
+          reader.readAsDataURL(blob);
+        },
+        "image/jpeg",
+        0.9
+      );
     });
   };
 
@@ -238,8 +262,8 @@ const handleFormSubmit = async (values) => {
   // const states = selectedCountry ? State.getStatesOfCountry(selectedCountry.isoCode) : [];
   // const cities = selectedState ? City.getCitiesOfState(selectedCountry?.isoCode, selectedState.isoCode) : [];
   // const customerManagers = ['Rambabu', 'Charan', 'Sathira', 'Jyothika'];
-  const gender = ['Male', 'Female'];
-  const status = ['Suspend', 'Active'];
+  const gender = ["Male", "Female"];
+  const status = ["Suspend", "Active"];
 
   // getPhoneCodeDisplay removed as unused
 
@@ -258,20 +282,22 @@ const handleFormSubmit = async (values) => {
   return (
     <>
       {isLoading && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000,
-          color: '#fff',
-          fontSize: '20px',
-        }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+            color: "#fff",
+            fontSize: "20px",
+          }}
+        >
           <Spin size="large" fullscreen />
           {/* <div style={{ position: 'absolute', top: '60%', width: '100%', textAlign: 'center', color: '#fff', fontSize: 18 }}>
                         Loading... Please wait while we process your request.
@@ -279,7 +305,9 @@ const handleFormSubmit = async (values) => {
         </div>
       )}
 
-      <div style={{ background: '#fff', borderRadius: 8, padding: 24, margin: 16 }}>
+      <div
+        style={{ background: "#fff", borderRadius: 8, padding: 24, margin: 16 }}
+      >
         <Form
           form={form}
           layout="vertical"
@@ -289,17 +317,34 @@ const handleFormSubmit = async (values) => {
           {/* Profile Image Section */}
           <Row justify="center" style={{ marginBottom: 24 }}>
             <Col>
-              <div style={{ position: 'relative', display: 'inline-block' }}>
+              <div style={{ position: "relative", display: "inline-block" }}>
                 <Avatar
-                  src={profileImage || initialValues.imageUrl || 'https://via.placeholder.com/150'}
+                  src={
+                    profileImage ||
+                    initialValues.imageUrl ||
+                    "https://via.placeholder.com/150"
+                  }
                   size={120}
-                  style={{ border: '2px solid #1677ff', cursor: isEditing ? 'pointer' : 'default', opacity: isEditing ? 1 : 0.8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                  style={{
+                    border: "2px solid #1677ff",
+                    cursor: isEditing ? "pointer" : "default",
+                    opacity: isEditing ? 1 : 0.8,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  }}
                   onClick={isEditing ? triggerFileInput : undefined}
                 />
                 <Button
                   icon={<CameraOutlined />}
                   shape="circle"
-                  style={{ position: 'absolute', bottom: 0, right: 0, background: '#1677ff', color: '#fff', border: 'none', opacity: isEditing ? 1 : 0.7 }}
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    background: "#1677ff",
+                    color: "#fff",
+                    border: "none",
+                    opacity: isEditing ? 1 : 0.7,
+                  }}
                   onClick={isEditing ? triggerFileInput : undefined}
                   disabled={!isEditing}
                   tabIndex={isEditing ? 0 : -1}
@@ -309,7 +354,7 @@ const handleFormSubmit = async (values) => {
                   ref={fileInputRef}
                   onChange={handleImageUpload}
                   accept="image/*"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   disabled={!isEditing}
                   tabIndex={isEditing ? 0 : -1}
                 />
@@ -338,7 +383,7 @@ const handleFormSubmit = async (values) => {
                   ref={imgRef}
                   src={originalImage}
                   onLoad={onImageLoad}
-                  style={{ maxHeight: '70vh', maxWidth: '100%' }}
+                  style={{ maxHeight: "70vh", maxWidth: "100%" }}
                   alt="Crop preview"
                 />
               </ReactCrop>
@@ -350,48 +395,63 @@ const handleFormSubmit = async (values) => {
               <Form.Item
                 label={<Text strong>ID</Text>}
                 name="hobid"
-                rules={[{ required: true, message: 'hob id is required' }]}
+                rules={[{ required: true, message: "hob id is required" }]}
               >
-                <Input placeholder="HOB ID" disabled={!isEditing} size="large" />
+                <Input
+                  placeholder="HOB ID"
+                  disabled={!isEditing}
+                  size="large"
+                />
               </Form.Item>
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
                 label={<Text strong>First Name</Text>}
                 name="firstName"
-                rules={[{ required: true, message: 'First name is required' }]}
+                rules={[{ required: true, message: "First name is required" }]}
               >
-                <Input placeholder="First Name" disabled={!isEditing} size="large" />
+                <Input
+                  placeholder="First Name"
+                  disabled={!isEditing}
+                  size="large"
+                />
               </Form.Item>
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
                 label={<Text strong>Last Name</Text>}
                 name="lastName"
-                rules={[{ required: true, message: 'Last name is required' }]}
+                rules={[{ required: true, message: "Last name is required" }]}
               >
-                <Input placeholder="Last Name" disabled={!isEditing} size="large" />
+                <Input
+                  placeholder="Last Name"
+                  disabled={!isEditing}
+                  size="large"
+                />
               </Form.Item>
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
                 label={<Text strong>Email Id</Text>}
                 name="email"
-                rules={[{ required: true, type: 'email', message: 'Valid email is required' }]}
+                rules={[
+                  {
+                    required: true,
+                    type: "email",
+                    message: "Valid email is required",
+                  },
+                ]}
               >
                 <Input placeholder="Email" disabled={!isEditing} size="large" />
               </Form.Item>
             </Col>
             <Col xs={24} md={8}>
-              <Form.Item
-                label={<Text strong>Phone Number</Text>}
-                required
-              >
+              <Form.Item label={<Text strong>Phone Number</Text>} required>
                 <Input.Group compact>
                   <Form.Item
                     name="phoneCode"
                     noStyle
-                    rules={[{ required: true, message: 'Code' }]}
+                    rules={[{ required: true, message: "Code" }]}
                   >
                     <Select
                       showSearch
@@ -402,7 +462,10 @@ const handleFormSubmit = async (values) => {
                       size="large"
                     >
                       {countries.map((c) => (
-                        <Select.Option key={c.isoCode} value={`+${c.phonecode}`}>{`+${c.phonecode} (${c.name})`}</Select.Option>
+                        <Select.Option
+                          key={c.isoCode}
+                          value={`+${c.phonecode}`}
+                        >{`+${c.phonecode} (${c.name})`}</Select.Option>
                       ))}
                     </Select>
                   </Form.Item>
@@ -410,12 +473,17 @@ const handleFormSubmit = async (values) => {
                     name="PhoneNo"
                     noStyle
                     rules={[
-                      { required: true, message: 'Phone number is required' },
-                      { pattern: /^[0-9]+$/, message: 'Only numbers allowed' },
-                      { min: 10, message: 'At least 10 digits' },
+                      { required: true, message: "Phone number is required" },
+                      { pattern: /^[0-9]+$/, message: "Only numbers allowed" },
+                      { min: 10, message: "At least 10 digits" },
                     ]}
                   >
-                    <Input style={{ width: 'calc(100% - 160px)' }} placeholder="Phone Number" disabled={!isEditing} size="large" />
+                    <Input
+                      style={{ width: "calc(100% - 160px)" }}
+                      placeholder="Phone Number"
+                      disabled={!isEditing}
+                      size="large"
+                    />
                   </Form.Item>
                 </Input.Group>
               </Form.Item>
@@ -424,11 +492,17 @@ const handleFormSubmit = async (values) => {
               <Form.Item
                 label={<Text strong>Gender</Text>}
                 name="gender"
-                rules={[{ required: true, message: 'Gender is required' }]}
+                rules={[{ required: true, message: "Gender is required" }]}
               >
-                <Select placeholder="Select Gender" disabled={!isEditing} size="large">
+                <Select
+                  placeholder="Select Gender"
+                  disabled={!isEditing}
+                  size="large"
+                >
                   {gender.map((g) => (
-                    <Select.Option key={g} value={g}>{g}</Select.Option>
+                    <Select.Option key={g} value={g}>
+                      {g}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -514,11 +588,17 @@ const handleFormSubmit = async (values) => {
               <Form.Item
                 label={<Text strong>Status</Text>}
                 name="status"
-                rules={[{ required: true, message: 'Status is required' }]}
+                rules={[{ required: true, message: "Status is required" }]}
               >
-                <Select placeholder="Select Status" disabled={!isEditing} size="large">
+                <Select
+                  placeholder="Select Status"
+                  disabled={!isEditing}
+                  size="large"
+                >
                   {status.map((s) => (
-                    <Select.Option key={s} value={s}>{s}</Select.Option>
+                    <Select.Option key={s} value={s}>
+                      {s}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -583,14 +663,30 @@ const handleFormSubmit = async (values) => {
         <Row justify="end" style={{ marginTop: 32 }} gutter={16}>
           {!isEditing ? (
             <Col>
-              <Button type="primary" style={{ background: '#3e4396', color: '#fff', fontWeight: 'bold', borderRadius: 8 }} size="large" onClick={() => setIsEditing(true)}>
+              <Button
+                type="primary"
+                style={{
+                  background: "#3e4396",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  borderRadius: 8,
+                }}
+                size="large"
+                onClick={() => setIsEditing(true)}
+              >
                 Edit
               </Button>
             </Col>
           ) : (
             <>
               <Col>
-                <Button type="primary" htmlType="submit" size="large" style={{ background: "#3e4396" }} onClick={() => form.submit()}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  size="large"
+                  style={{ background: "#3e4396" }}
+                  onClick={() => form.submit()}
+                >
                   Save
                 </Button>
               </Col>
@@ -608,8 +704,3 @@ const handleFormSubmit = async (values) => {
 };
 
 export default HobDetails;
-
-
-
-
-

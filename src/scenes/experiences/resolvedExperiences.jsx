@@ -202,7 +202,7 @@ const ResolvedExperiences = () => {
   ];
 
   const handleRowClick = (params) => {
-    Navigate("/ticketdetails", { state: { ticket: params.row } });
+    Navigate("/hob/ticketdetails", { state: { ticket: params.row } });
   };
 
   return (

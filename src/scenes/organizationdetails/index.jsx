@@ -407,7 +407,7 @@ const OrganizationDetails = () => {
         <Button
           type="primary"
           onClick={() => {
-            Navigate("/organizationadd", {
+            Navigate("/hob/organizationadd", {
               state: {
                 organizationid: ticket.id,
                 organizationname: ticket.name,
