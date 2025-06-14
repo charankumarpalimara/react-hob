@@ -92,7 +92,7 @@ const Dashboard = () => {
       progress:
         allExperienceCount > 0 ? newExperienceCount / allExperienceCount : 0,
       icon: <NewReleasesIcon />,
-      link: "hob/newExperiences",
+      link: "/hob/newExperiences",
     },
     {
       title: `${resolvedExperienceCount}`,
@@ -102,7 +102,7 @@ const Dashboard = () => {
           ? resolvedExperienceCount / allExperienceCount
           : 0,
       icon: <CheckCircleIcon />,
-      link: "hob/resolvedExperiences",
+      link: "/hob/resolvedExperiences",
     },
     {
       title: `${pendingExperienceCount}`,
@@ -112,7 +112,7 @@ const Dashboard = () => {
           ? pendingExperienceCount / allExperienceCount
           : 0,
       icon: <HourglassEmptyIcon />,
-      link: "hob/pendingExperiences",
+      link: "/hob/pendingExperiences",
     },
   ];
 
