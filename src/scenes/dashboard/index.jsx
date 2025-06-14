@@ -84,7 +84,7 @@ const Dashboard = () => {
       subtitle: "ALL EXPERIENCE",
       progress: allExperienceCount > 0 ? 1 : 0,
       icon: <ReceiptLongIcon />,
-      link: "/allExperiences",
+      link: "/hob/allExperiences",
     },
     {
       title: `${newExperienceCount}`,
@@ -92,7 +92,7 @@ const Dashboard = () => {
       progress:
         allExperienceCount > 0 ? newExperienceCount / allExperienceCount : 0,
       icon: <NewReleasesIcon />,
-      link: "/newExperiences",
+      link: "hob/newExperiences",
     },
     {
       title: `${resolvedExperienceCount}`,
@@ -102,7 +102,7 @@ const Dashboard = () => {
           ? resolvedExperienceCount / allExperienceCount
           : 0,
       icon: <CheckCircleIcon />,
-      link: "/resolvedExperiences",
+      link: "hob/resolvedExperiences",
     },
     {
       title: `${pendingExperienceCount}`,
@@ -112,7 +112,7 @@ const Dashboard = () => {
           ? pendingExperienceCount / allExperienceCount
           : 0,
       icon: <HourglassEmptyIcon />,
-      link: "/pendingExperiences",
+      link: "hob/pendingExperiences",
     },
   ];
 
