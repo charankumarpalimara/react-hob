@@ -841,11 +841,7 @@ const Topbar = ({ onLogout }) => {
           >
             <Item
               title="Dashboard"
-<<<<<<< HEAD
               to="/hob"
-=======
-              to="/hob/"
->>>>>>> 9bf6d8f49097c0c1b70e84f16754ce9ab615785e
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
