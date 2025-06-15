@@ -67,7 +67,7 @@ const OrganizationDetails = () => {
     const fetchGetAllData = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}api/api/v1/getOrganizationBranchesByOrgid/${ticket.id}`
+          `${process.env.REACT_APP_API_URL}/v1/getOrganizationBranchesByOrgid/${ticket.id}`
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.rows)) {
@@ -113,7 +113,7 @@ const OrganizationDetails = () => {
     try {
       const payload = { ...branchEdits }; // branchEdits should include id
       await axios.post(
-        `${process.env.REACT_APP_API_URL}api/v1/UpdateOrganizationDetails`,
+        `${process.env.REACT_APP_API_URL}/v1/UpdateOrganizationDetails`,
         payload,
         { headers: { "Content-Type": "application/json" } }
       );
