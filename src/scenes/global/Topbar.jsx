@@ -161,11 +161,7 @@ const Topbar = ({ onLogout }) => {
 
   const getPageTitle = () => {
     switch (location.pathname) {
-<<<<<<< HEAD
       case "/hob":
-=======
-      case "/hob/":
->>>>>>> 9bf6d8f49097c0c1b70e84f16754ce9ab615785e
         return "Dashboard";
       case "/hob/cm":
         return "Customer Manager";
