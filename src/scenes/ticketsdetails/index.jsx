@@ -229,6 +229,8 @@ const TicketDetails = () => {
     organization: ticket.organization || "",
     cmname: ticket.cmname || "",
     experience: ticket.experience || "",
+    experiencedetails : ticket.experiencedetails || "",
+    impact: ticket.impact || "",
     branch: ticket.branch || "",
     priority: ticket.priority || "",
     crmname: ticket.crmname || "",
