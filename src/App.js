@@ -185,46 +185,55 @@ function App() {
               <Route path="*" element={<Login onLogin={handleLogin} />} />
             ) : (
               <>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/allExperiences" element={<AllExperiences />} />
-                <Route path="/newExperiences" element={<NewExperiences />} />
+                <Route path="/hob" element={<Dashboard />} />
                 <Route
-                  path="/pendingExperiences"
+                  path="/hob/allExperiences"
+                  element={<AllExperiences />}
+                />
+                <Route
+                  path="/hob/newExperiences"
+                  element={<NewExperiences />}
+                />
+                <Route
+                  path="/hob/pendingExperiences"
                   element={<PendingExperiences />}
                 />
                 <Route
-                  path="/resolvedExperiences"
+                  path="/hob/resolvedExperiences"
                   element={<ResolvedExperiences />}
                 />
-                <Route path="/cm" element={<Cm />} />
-                <Route path="/crm" element={<Crm />} />
-    
-                <Route path="/organization" element={<Organization />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/notes" element={<Notes />} />
-                <Route path="/cmform" element={<CmForm />} />
-                <Route path="/crmform" element={<CrmForm />} />
-                <Route path="/bsuform" element={<BsuForm />} />
- 
+                <Route path="/hob/cm" element={<Cm />} />
+                <Route path="/hob/crm" element={<Crm />} />
+
+                <Route path="/hob/organization" element={<Organization />} />
+                <Route path="/hob/profile" element={<Profile />} />
+                <Route path="/hob/notes" element={<Notes />} />
+                <Route path="/hob/cmform" element={<CmForm />} />
+                <Route path="/hob/crmform" element={<CrmForm />} />
+                <Route path="/hob/bsuform" element={<BsuForm />} />
+
                 <Route
-                  path="/organizationform"
+                  path="/hob/organizationform"
                   element={<OrganizationForm />}
                 />
-                <Route path="/cmdetails" element={<CmDetails />} />
-                <Route path="/crmdetails" element={<CrmDetails />} />
+                <Route path="/hob/cmdetails" element={<CmDetails />} />
+                <Route path="/hob/crmdetails" element={<CrmDetails />} />
                 <Route
-                  path="/organizationdetails"
+                  path="/hob/organizationdetails"
                   element={<OrganizationDetails />}
                 />
-                <Route path="/organizationadd" element={<Organizationadd />} />
-                <Route path="/hobdetails" element={<HobDetails />} />
-                <Route path="/ticketdetails" element={<TicketDetails />} />
-                <Route path="/taskdetails" element={<TaskDetails />} />
+                <Route
+                  path="/hob/organizationadd"
+                  element={<Organizationadd />}
+                />
+                <Route path="/hob/hobdetails" element={<HobDetails />} />
+                <Route path="/hob/ticketdetails" element={<TicketDetails />} />
+                <Route path="/hob/taskdetails" element={<TaskDetails />} />
                 {/* <Route path="/bar" element={<Bar />} /> */}
                 {/* <Route path="/pie" element={<Pie />} /> */}
-                <Route path="/line" element={<Line />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/hob/line" element={<Line />} />
+                <Route path="/hob/faq" element={<FAQ />} />
+                <Route path="/hob/calendar" element={<Calendar />} />
                 {/* <Route path="/geography" element={<Geography />} /> */}
                 <Route path="*" element={<Navigate to="/" />} />
               </>

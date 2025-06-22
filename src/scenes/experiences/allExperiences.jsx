@@ -113,7 +113,8 @@ const AllExperiences = () => {
     const fetchTickets = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/v1/getAllExperiences`
+          // `${process.env.REACT_APP_API_URL}/v1/getAllExperiences`
+          "http://127.0.0.1:8080/v1/getAllExperiences"
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.data)) {
@@ -125,7 +126,7 @@ const AllExperiences = () => {
             impact: item.impact || "N/A",
             subject: item.subject || "N/A",
             priority: item.priority || "N/A",
-            status: item.extraind7 || item.status || "N/A",
+            status: item.status || "N/A",
             date: item.date || "N/A",
             updated: item.updated || "N/A",
             organizationid: item.organizationid,
@@ -205,7 +206,7 @@ const AllExperiences = () => {
   ];
 
   const handleRowClick = (params) => {
-    Navigate("/ticketdetails", { state: { ticket: params.row } });
+    Navigate("/hob/ticketdetails", { state: { ticket: params.row } });
   };
 
   return (

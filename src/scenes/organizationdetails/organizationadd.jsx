@@ -116,7 +116,7 @@ const Organizationadd = () => {
           passwords: "",
         },
       ]);
-      Navigate("/organization");
+      Navigate("/hob/organization");
     } catch (error) {
       console.error("Error submitting form data:", error);
     } finally {

@@ -108,7 +108,7 @@ const OrganizationForm = () => {
       }
       // alert("Form Data Submitted Successfully");
       message.success("Organization Registered successfully!");
-            Navigate('/organization');
+      Navigate("/hob/organization");
       form.resetFields();
       setBranchInstances([
         {
@@ -126,8 +126,6 @@ const OrganizationForm = () => {
           passwords: "",
         },
       ]);
-
-
     } catch (error) {
       console.error("Error submitting form data:", error);
     } finally {

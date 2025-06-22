@@ -118,9 +118,7 @@ const CmDetails = () => {
   useEffect(() => {
     if (!isEditing) return;
     if (crmidValue) {
-      fetch(
-        `${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`
-      )
+      fetch(`${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`)
         .then((res) => res.json())
         .then((data) => {
           setCrmName(data.crmNames || "");
@@ -209,7 +207,7 @@ const CmDetails = () => {
         // alert('Customer Manager details updated successfully');
         setIsLoading(false);
         setIsEditing(false);
-        Navigate("/cm"); // Redirect to the list page after successful update
+        Navigate("/hob/cm"); // Redirect to the list page after successful update
       } else {
         // alert('Update failed: ' + (data?.error || response.statusText));
         message.error("Update failed: " + (data?.error || response.statusText));

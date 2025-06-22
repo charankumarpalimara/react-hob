@@ -120,9 +120,12 @@ const PendingExperiences = () => {
           const transformedData = data.data.map((item, idx) => ({
             id: item.experienceid || idx, // DataGrid requires unique id
             experienceid: item.experienceid || "N/A",
+            experience: item.experience || "N/A",
+            experiencedetails: item.experiencedetails || "N/A",
+            impact: item.impact || "N/A",
             subject: item.subject || "N/A",
             priority: item.priority || "N/A",
-            status: item.extraind7 || item.status || "N/A",
+            status: item.status || "N/A",
             date: item.date || "N/A",
             updated: item.updated || "N/A",
             organizationid: item.organizationid,
@@ -202,7 +205,7 @@ const PendingExperiences = () => {
   ];
 
   const handleRowClick = (params) => {
-    Navigate("/ticketdetails", { state: { ticket: params.row } });
+    Navigate("/hob/ticketdetails", { state: { ticket: params.row } });
   };
 
   return (

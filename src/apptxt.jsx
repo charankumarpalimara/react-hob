@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, Navigate, createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate,
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import { CssBaseline, Box, useMediaQuery } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 // Import Poppins font weights
-import '@fontsource/poppins/300.css'; // Light
-import '@fontsource/poppins/400.css'; // Regular
-import '@fontsource/poppins/500.css'; // Medium
-import '@fontsource/poppins/600.css'; // Semi-bold
-import '@fontsource/poppins/700.css'; // Bold
+import "@fontsource/poppins/300.css"; // Light
+import "@fontsource/poppins/400.css"; // Regular
+import "@fontsource/poppins/500.css"; // Medium
+import "@fontsource/poppins/600.css"; // Semi-bold
+import "@fontsource/poppins/700.css"; // Bold
 
 // Import your components
 import Topbar from "./scenes/global/Topbar";
@@ -46,34 +52,34 @@ import Login from "./scenes/login";
 
 const router = createBrowserRouter(
   [
-    { path: "/", element: <Dashboard /> },
-    { path: "/cm", element: <Cm /> },
-    { path: "/crm", element: <Crm /> },
-    { path: "/hob", element: <Hob /> },
-    { path: "/organization", element: <Organization /> },
-    { path: "/allExperiences", element: <AllExperiences /> },
-    { path: "/newExperiences", element: <NewExperiences /> },
-    { path: "/pendingExperiences", element: <PendingExperiences /> },
-    { path: "/resolvedExperiences", element: <ResolvedExperiences /> },
-    { path: "/profile", element: <Profile /> },
-    { path: "/notes", element: <Notes /> },
-    { path: "/form", element: <Form /> },
-    { path: "/cmform", element: <CmForm /> },
-    { path: "/crmform", element: <CrmForm /> },
-    { path: "/bsuform", element: <BsuForm /> },
-    { path: "/organizationform", element: <OrganizationForm /> },
-    { path: "/cmdetails", element: <CmDetails /> },
-    { path: "/crmdetails", element: <CrmDetails /> },
-    { path: "/organizationdetails", element: <OrganizationDetails /> },
-    { path: "/hobdetails", element: <HobDetails /> },
-    { path: "/ticketdetails", element: <TicketDetails /> },
-    { path: "/bar", element: <Bar /> },
-    { path: "/pie", element: <Pie /> },
-    { path: "/line", element: <Line /> },
-    { path: "/faq", element: <FAQ /> },
-    { path: "/calendar", element: <Calendar /> },
-    { path: "/geography", element: <Geography /> },
-    { path: "*", element: <Navigate to="/" /> },
+    { path: "/hob", element: <Dashboard /> },
+    { path: "/hob/cm", element: <Cm /> },
+    { path: "/hob/crm", element: <Crm /> },
+    { path: "/hob/hob", element: <Hob /> },
+    { path: "/hob/organization", element: <Organization /> },
+    { path: "/hob/allExperiences", element: <AllExperiences /> },
+    { path: "/hob/newExperiences", element: <NewExperiences /> },
+    { path: "/hob/pendingExperiences", element: <PendingExperiences /> },
+    { path: "/hob/resolvedExperiences", element: <ResolvedExperiences /> },
+    { path: "/hob/profile", element: <Profile /> },
+    { path: "/hob/notes", element: <Notes /> },
+    { path: "/hob/form", element: <Form /> },
+    { path: "/hob/cmform", element: <CmForm /> },
+    { path: "/hob/crmform", element: <CrmForm /> },
+    { path: "/hob/bsuform", element: <BsuForm /> },
+    { path: "/hob/organizationform", element: <OrganizationForm /> },
+    { path: "/hob/cmdetails", element: <CmDetails /> },
+    { path: "/hob/crmdetails", element: <CrmDetails /> },
+    { path: "/hob/organizationdetails", element: <OrganizationDetails /> },
+    { path: "/hob/hobdetails", element: <HobDetails /> },
+    { path: "/hob/ticketdetails", element: <TicketDetails /> },
+    { path: "/hob/bar", element: <Bar /> },
+    { path: "/hob/pie", element: <Pie /> },
+    { path: "/hob/line", element: <Line /> },
+    { path: "/hob/faq", element: <FAQ /> },
+    { path: "/hob/calendar", element: <Calendar /> },
+    { path: "/hob/geography", element: <Geography /> },
+    { path: "*", element: <Navigate to="/hob" /> },
   ],
   {
     future: {
@@ -93,18 +99,18 @@ function Cgcvhg() {
   const appTheme = createTheme(theme, {
     typography: {
       fontFamily: [
-        'Poppins',
-        '-apple-system',
-        'BlinkMacSystemFont',
+        "Poppins",
+        "-apple-system",
+        "BlinkMacSystemFont",
         '"Segoe UI"',
-        'Roboto',
+        "Roboto",
         '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
+        "Arial",
+        "sans-serif",
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
-      ].join(','),
+      ].join(","),
       h1: { fontWeight: 700 },
       h2: { fontWeight: 700 },
       h3: { fontWeight: 600 },
@@ -116,41 +122,40 @@ function Cgcvhg() {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            fontFamily: 'Poppins, sans-serif',
+            fontFamily: "Poppins, sans-serif",
           },
         },
       },
       MuiButton: {
         styleOverrides: {
           root: {
-            fontFamily: 'Poppins, sans-serif',
+            fontFamily: "Poppins, sans-serif",
             fontWeight: 500,
           },
         },
       },
       MuiTypography: {
         defaultProps: {
-          fontFamily: 'Poppins, sans-serif',
+          fontFamily: "Poppins, sans-serif",
         },
       },
     },
   });
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token');
-    setIsAuthenticated(!!token);  // Convert token existence to boolean
+    const token = sessionStorage.getItem("token");
+    setIsAuthenticated(!!token); // Convert token existence to boolean
   }, []);
-  
+
   const handleLogin = () => {
     setIsAuthenticated(true);
-    navigate('/');
+    navigate("/hob");
   };
-const handleLogout = () => { 
-    sessionStorage.removeItem('token');
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
     setIsAuthenticated(false);
-    navigate('/login');
-  }
-
+    navigate("/hob/login");
+  };
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -158,8 +163,15 @@ const handleLogout = () => {
         <CssBaseline />
 
         {/* Topbar: Full width at the top */}
-        <Box sx={{ width: "100vw", top: 5, zIndex: 1000, display: isAuthenticated ? "block" : "none" }}>
-          <Topbar setIsSidebar={setIsSidebar} onLogout = {handleLogout} />
+        <Box
+          sx={{
+            width: "100vw",
+            top: 5,
+            zIndex: 1000,
+            display: isAuthenticated ? "block" : "none",
+          }}
+        >
+          <Topbar setIsSidebar={setIsSidebar} onLogout={handleLogout} />
         </Box>
 
         {/* Sidebar: Fixed on the left */}
@@ -175,7 +187,7 @@ const handleLogout = () => {
               // display: isAuthenticated  === 'true' ? "block" : "none"
             }}
           >
-            <Sidebar isSidebar={isSidebar} onLogout = {handleLogout} />
+            <Sidebar isSidebar={isSidebar} onLogout={handleLogout} />
           </Box>
         )}
 
@@ -184,7 +196,12 @@ const handleLogout = () => {
           component="main"
           sx={{
             flexGrow: 1,
-            marginLeft: isMobile || !isAuthenticated ? "0px" : isSidebar ? "260px" : "0px" ,
+            marginLeft:
+              isMobile || !isAuthenticated
+                ? "0px"
+                : isSidebar
+                ? "260px"
+                : "0px",
             padding: "20px 20px 20px",
             overflowY: "auto",
             transition: "margin 0.3s ease-in-out",
@@ -196,15 +213,18 @@ const handleLogout = () => {
               backgroundColor: "#000000",
               borderRadius: "4px",
             },
-            fontFamily: 'Poppins, sans-serif !important',
+            fontFamily: "Poppins, sans-serif !important",
           }}
         >
           {isAuthenticated ? (
             <RouterProvider router={router} />
           ) : (
             <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+              <Route
+                path="/hob/login"
+                element={<Login onLogin={handleLogin} />}
+              />
+              <Route path="*" element={<Navigate to="/hob/login" />} />
             </Routes>
           )}
         </Box>

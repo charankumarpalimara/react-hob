@@ -1,6 +1,7 @@
 {
-  "name": "react-admin",
+  "name": "react-hob",
   "version": "0.1.0",
+  "homepage": "/hob",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -60,6 +61,7 @@
     "react-router-dom": "^6.29.0",
     "react-scripts": "5.0.1",
     "react-use-downloader": "^1.2.10",
+    "socket.io-client": "^4.8.1",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5",
     "yup": "^0.32.11"

@@ -164,11 +164,11 @@ const Hob = () => {
   }, []);
 
   const handleNewTicket = () => {
-    Navigate("/form");
+    Navigate("/hob/form");
   };
 
   const handleRowClick = (params) => {
-    Navigate("/hobdetails", { state: { ticket: params.row } });
+    Navigate("/hob/hobdetails", { state: { ticket: params.row } });
   };
 
   return (

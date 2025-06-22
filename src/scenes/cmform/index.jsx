@@ -96,9 +96,7 @@ const CmForm = () => {
   useEffect(() => {
     // if (!isEditing) return;
     if (crmidValue) {
-      fetch(
-        `${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`
-      )
+      fetch(`${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`)
         .then((res) => res.json())
         .then((data) => {
           setCrmName(data.crmNames || "");
@@ -253,7 +251,7 @@ const CmForm = () => {
       );
       // Modal.success({ content: "CM Registered Successfully!" });
       message.success("CM Registered Successfully!");
-      Navigate("/cm"); // Redirect to CM List page
+      Navigate("/hob/cm"); // Redirect to CM List page
 
       form.resetFields();
       setProfileImage(null);
