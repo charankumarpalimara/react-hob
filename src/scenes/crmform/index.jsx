@@ -166,7 +166,7 @@ const CrmForm = () => {
     setIsLoading(true);
     const formData = new FormData();
     const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
-    const createrrole = sessionData?.extraind10 || "hob";
+    const createrrole = "hob";
     const createrid = sessionData?.hobid || "";
     const password = (values.firstName || "") + (values.PhoneNo || "");
 
@@ -200,15 +200,12 @@ const CrmForm = () => {
       } catch (error) {
         console.error("Error converting image to blob:", error);
       }
-    } else {
-      Modal.warning({ content: "Please upload a profile image." });
-      setIsLoading(false);
-      return;
-    }
+    } 
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/v1/createcrm`,
+        //  `http://127.0.0.1:8080/v1/createcrm`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -502,11 +499,11 @@ const CrmForm = () => {
                   size="large"
                   style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
                 >
-                  {branchNames.map((b) => (
-                    <Option key={b} value={b}>
-                      {b}
-                    </Option>
-                  ))}
+                {branchNames.map((item, idx) => (
+                  <Select.Option key={idx} value={item.branch}>
+                    {item.branch}
+                  </Select.Option>
+                ))}
                 </Select>
               </Form.Item>
             </Col>

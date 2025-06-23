@@ -163,50 +163,76 @@ const Topbar = ({ onLogout }) => {
     switch (location.pathname) {
       case "/hob":
         return "Dashboard";
+
       case "/hob/cm":
         return "Customer Manager";
+
       case "/hob/crm":
         return "Customer Relationship Manager";
+
       case "/hob/cmform":
         return "Create a New Customer Manager";
+
       case "/hob/crmform":
         return " Create a New Customer Relationship Manager";
+
       case "/hob/hob":
         return "Head of the Business";
+
       case "/hob/tasks":
         return "Tasks List";
+
       case "/hob/taskdetails":
         return "Task Details";
+
       case "/hob/taskform":
         return "Create New Task";
+
       case "/hob/crmdetails":
         return "Customer Relationship Manager Details";
+
       case "/hob/cmdetails":
         return "Customer Manager Details";
+
       case "/hob/organizationdetails":
         return " Organization Details";
+
       case "/hob/organizationform":
         return "Create a New Organization";
+
+      case "/hob/organizationadd":
+        return "Add New Branch";
+
       case "/hob/ticketdetails":
         return " Experience Details";
+
       case "/hob/form":
         return "Create a New Organization";
+
       case "/hob/hobdetails":
         return "Head of The Department Details";
+
       case "/hob/allExperiences":
         return "All Experiences";
+
       case "/hob/organization":
         return "Organizations";
+
       case "/hob/newExperiences":
         return "New Experiences";
+
       case "/hob/pendingExperiences":
         return "Pending Experiences";
+
       case "/hob/resolvedExperiences":
         return "Resolved Experiences";
+
       case "/hob/profile":
         return "Profile";
+
       case "/hob/notes":
         return "Notes";
+
       case "/hob/calendar":
         return "Calendar";
       default:
@@ -239,6 +265,12 @@ const Topbar = ({ onLogout }) => {
         return {
           primaryTitle: "Organization",
           secondaryTitle: "Create a New Organization",
+        };
+
+      case "/hob/organizationadd":
+        return {
+          primaryTitle: "Organization",
+          secondaryTitle: " Add New Organization",
         };
       case "/hob/cmform":
         return {

@@ -66,63 +66,78 @@ const Organizationadd = () => {
     }
   };
 
-  const handleFormSubmit = async () => {
-    setIsLoading(true);
-    const userDetails = JSON.parse(sessionStorage.getItem("userDetails")) || {};
-    const createrrole = userDetails.extraind10 || "admin";
-    const createrid = "1";
-    try {
-      for (const branch of branchInstances) {
-        const payload = {
-          organizationid: branch.organizationid || "",
-          organizationname: branch.organizationname || "",
-          branch: branch.branch,
-          branchtype: branch.branchtype || "Parent",
-          phonecode: branch.phoneCode,
-          mobile: branch.phoneno,
-          email: branch.email,
-          username: branch.name ? branch.organizationname.toLowerCase() : "",
-          passwords: branch.passwords || "defaultPassword123",
-          country: branch.country,
-          state: branch.province,
-          district: branch.city,
-          address: branch.address,
-          postalcode: branch.postcode,
-          createrid,
-          createrrole,
-        };
+const handleFormSubmit = async () => {
+  setIsLoading(true);
+  const userDetails = JSON.parse(sessionStorage.getItem("hobDetails")) || {};
+  const createrrole = userDetails.extraind10 || "hob";
+  const createrid = userDetails.hobid;
+  try {
+    for (const branch of branchInstances) {
+      const payload = {
+        organizationid: organizationid || "",
+        organizationname: organizationname || "",
+        branch: branch.branch,
+        branchtype: "Branch",
+        phonecode: branch.phoneCode,
+        mobile: branch.phoneno,
+        email: branch.email,
+        username: organizationname.toLowerCase(),
+        passwords: branch.passwords || "defaultPassword123",
+        country: branch.country,
+        state: branch.province,
+        district: branch.city,
+        address: branch.address,
+        postalcode: branch.postcode,
+        createrid,
+        createrrole,
+      };
+      try {
         await axios.post(
-          `${process.env.REACT_APP_API_URL}api/api/v1/organizationAdding`,
+          `http://127.0.0.1:8080/v1/organizationAdding`,
           payload,
           {
             headers: { "Content-Type": "application/json" },
           }
         );
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.status === 409 &&
+          error.response.data?.error === "Branch Already Exicist"
+        ) {
+          message.error(`Branch "${branch.branch}" already exists!`);
+          setIsLoading(false);
+          return; // Stop further processing
+        } else {
+          throw error; // Rethrow for other errors
+        }
       }
-      message.success("Organization Registered successfully!");
-      form.resetFields();
-      setBranchInstances([
-        {
-          branch: "",
-          email: "",
-          phoneCode: "",
-          phoneno: "",
-          address: "",
-          city: "",
-          province: "",
-          country: "",
-          postcode: "",
-          branchtype: "",
-          passwords: "",
-        },
-      ]);
-      Navigate("/hob/organization");
-    } catch (error) {
-      console.error("Error submitting form data:", error);
-    } finally {
-      setIsLoading(false);
     }
-  };
+    message.success("Branch Registered successfully!");
+    form.resetFields();
+    setBranchInstances([
+      {
+        branch: "",
+        email: "",
+         phoneCode: "",
+        phoneno: "",
+        address: "",
+        city: "",
+        province: "",
+        country: "",
+        postcode: "",
+        branchtype: "",
+        passwords: "",
+      },
+    ]);
+    Navigate("/hob/organization");
+  } catch (error) {
+    console.error("Error submitting form data:", error);
+    message.error("Error submitting form data");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <>
@@ -193,33 +208,6 @@ const Organizationadd = () => {
                 </Col>
                 <Col xs={24} md={8}>
                   <Form.Item
-                    label={<b>Branch Type</b>}
-                    name="branchtype"
-                    required
-                  >
-                    <Select
-                      value={branch.branchtype}
-                      onChange={(value) => {
-                        const updated = [...branchInstances];
-                        updated[index].branchtype = value;
-                        setBranchInstances(updated);
-                      }}
-                      placeholder="Select Branch Type"
-                      size="large"
-                      style={{
-                        borderRadius: 8,
-                        background: "#fff",
-                        fontSize: 16,
-                      }}
-                      // disabled={!editMode ? true : false}
-                    >
-                      <Select.Option value="Parent">Parent</Select.Option>
-                      <Select.Option value="Branch">Branch</Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                  <Form.Item
                     label="Branch Name"
                     name={[index, "branch"]}
                     rules={[
@@ -247,27 +235,21 @@ const Organizationadd = () => {
                   <Form.Item label={<Text strong>Phone Number</Text>} required>
                     <Input.Group compact>
                       <Form.Item
-                        name="phoneCode"
+                        name={["branchInstances", index, "phoneCode"]}
                         noStyle
                         rules={[{ required: true, message: "Code" }]}
-                        value={branch.phoneCode}
-                        onChange={(e) => {
-                          const updated = [...branchInstances];
-                          updated[index].phoneCode = e.target.value;
-                          setBranchInstances(updated);
-                        }}
                       >
                         <Select
                           showSearch
                           style={{ width: 160 }}
                           placeholder="Code"
                           optionFilterProp="children"
-                          disabled={false} // Disable if not editing
+                          disabled={false}
                           size="large"
                           value={branch.phoneCode}
-                          onChange={(e) => {
+                          onChange={(value) => {
                             const updated = [...branchInstances];
-                            updated[index].phoneCode = e.target.value;
+                            updated[index].phoneCode = value;
                             setBranchInstances(updated);
                           }}
                         >
@@ -399,10 +381,10 @@ const Organizationadd = () => {
                     >
                       {(branch.country
                         ? State.getStatesOfCountry(
-                            Country.getAllCountries().find(
-                              (c) => c.name === branch.country
-                            )?.isoCode
-                          )
+                          Country.getAllCountries().find(
+                            (c) => c.name === branch.country
+                          )?.isoCode
+                        )
                         : []
                       ).map((s) => (
                         <Select.Option key={s.isoCode} value={s.name}>
@@ -437,15 +419,15 @@ const Organizationadd = () => {
                     >
                       {(branch.province
                         ? City.getCitiesOfState(
+                          Country.getAllCountries().find(
+                            (c) => c.name === branch.country
+                          )?.isoCode,
+                          State.getStatesOfCountry(
                             Country.getAllCountries().find(
                               (c) => c.name === branch.country
-                            )?.isoCode,
-                            State.getStatesOfCountry(
-                              Country.getAllCountries().find(
-                                (c) => c.name === branch.country
-                              )?.isoCode
-                            ).find((s) => s.name === branch.province)?.isoCode
-                          )
+                            )?.isoCode
+                          ).find((s) => s.name === branch.province)?.isoCode
+                        )
                         : []
                       ).map((city) => (
                         <Select.Option key={city.name} value={city.name}>

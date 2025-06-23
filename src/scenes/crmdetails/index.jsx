@@ -12,6 +12,7 @@ import {
   message,
   Collapse,
   Spin,
+
 } from "antd";
 import { CameraOutlined } from "@ant-design/icons";
 import ReactCrop from "react-image-crop";
@@ -20,6 +21,7 @@ import { Country, State } from "country-state-city";
 import { useLocation } from "react-router-dom";
 
 const { Text } = Typography;
+const { Option } = Select;
 
 function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   const cropWidth = mediaWidth * 0.9;
@@ -40,6 +42,7 @@ const CrmDetails = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+
   // const [orgManagerPairs, setOrgManagerPairs] = useState([{ org: '', manager: '' }]);
   const [profileImage, setProfileImage] = useState(null);
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -49,10 +52,14 @@ const CrmDetails = () => {
   const imgRef = useRef(null);
   const fileInputRef = useRef(null);
   const location = useLocation();
-  // const [organizationNames, setOrganizationNames] = useState([]);
+  // const Navigate = useNavigate();
+  const [organizationNames, setOrganizationNames] = useState([]);
+  const [branchNames, setBranchNames] = useState([]);
+  const [cmNames, setCmNames] = useState([]);
   const [relationsData, setRelationsData] = useState([]);
   const [editingRelationId, setEditingRelationId] = useState(null);
   const [relationEdits, setRelationEdits] = useState({});
+  const [assignForm, setAssingForm] = useState(false);
 
   const [form] = Form.useForm();
   const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
@@ -93,6 +100,7 @@ const CrmDetails = () => {
         setRelationsData((prev) => prev.filter((item) => item.id !== id));
         setIsEditing(false);
         message.success("Relation deleted successfully");
+       setIsLoading(false);
       } else {
         const errorData = await response.json();
         message.error(
@@ -134,9 +142,11 @@ const CrmDetails = () => {
       email: ticket.email || "",
       PhoneNo: ticket.mobile || "",
       phoneCode: ticket.phonecode || "",
+      passwords: ticket.passwords || "",
       postalcode: ticket.postalcode || "",
       organization0: ticket.organization || "",
       customerManager0: ticket.customermanager || "",
+
       gender: ticket.gender || "",
       imageUrl: ticket.imageUrl || "",
     }),
@@ -154,10 +164,10 @@ const CrmDetails = () => {
     formData.append("lastname", values.lastName);
     formData.append("email", values.email);
     formData.append("phoneCode", values.phoneCode);
-    formData.append("mobile", values.PhoneNo);
+    formData.append("PhoneNo", values.PhoneNo);
     formData.append("gender", values.gender);
     formData.append("status", values.status);
-    // formData.append('password', values.password || '');
+    formData.append('passwords', ticket.passwords || '');
     // formData.append('createrrole', createrrole);
     // formData.append('createrid', createrid);
 
@@ -170,12 +180,12 @@ const CrmDetails = () => {
       mobile: values.PhoneNo || "",
       status: values.status || "",
       gender: values.gender || "",
+      passwords: values.passwords || "",
     });
 
-    const sessionData = JSON.parse(sessionStorage.getItem("userDetails")); // replace with your actual key
-    const createrrole = sessionData?.extraind10 || "";
-    const createrid =
-      sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
+    const sessionData = JSON.parse(sessionStorage.getItem("hobDetails")); // replace with your actual key
+    const createrrole = "hob";
+    const createrid = sessionData?.hobid || "";
     formData.append("createrrole", createrrole);
     formData.append("createrid", createrid);
 
@@ -193,11 +203,12 @@ const CrmDetails = () => {
         u8arr[n] = bstr.charCodeAt(n);
       }
       const file = new Blob([u8arr], { type: mime });
-      formData.append("crmProfileImage", file, "profile.jpg");
+       formData.append("crmProfileImageBySelf", file, "profile.jpg");
     }
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/v1/UpdatecrmProfileDetailsByitsSelf`,
+        // "http://127.0.0.1:8080/v1/UpdatecrmProfileDetailsByitsSelf",
         {
           method: "POST",
           body: formData,
@@ -221,6 +232,68 @@ const CrmDetails = () => {
       // alert('Error submitting form');
     }
   };
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/v1/getAllOrganizationnames`
+          // "http://127.0.0.1:8080/v1/getAllOrganizationnames",
+        );
+        const data = await response.json();
+        if (response.ok && Array.isArray(data.data)) {
+          setOrganizationNames(
+            data.data.map((item) => item.organizationname || "N/A")
+          );
+        }
+      } catch (error) { }
+    };
+    fetchTickets();
+  }, []);
+
+
+  const fetchBranch = async (orgName) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/v1/getBranchbyOrganizationname/${orgName}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.branchDetails)) {
+          setBranchNames(data.branchDetails);
+        } else if (typeof data.branchDetails === "string") {
+          setBranchNames([data.branchDetails]);
+        } else {
+          setBranchNames([]);
+        }
+      }
+    } catch (error) { }
+  };
+
+
+  const fetchCmNames = async (orgName, branch) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orgName, branch }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.data)) {
+          setCmNames(data.data); // or setCmNames(data.data)
+        } else {
+          setCmNames([]);
+        }
+      }
+    } catch (error) {
+      setCmNames([]);
+    }
+  };
+
 
   useEffect(() => {
     form.setFieldsValue(initialValues);
@@ -767,7 +840,7 @@ const CrmDetails = () => {
                             </>
                           ) : (
                             <>
-                              <Button
+                              {/* <Button
                                 type="primary"
                                 size="small"
                                 style={{
@@ -783,7 +856,7 @@ const CrmDetails = () => {
                                 }}
                               >
                                 Edit
-                              </Button>
+                              </Button> */}
                               <Button
                                 size="small"
                                 danger
@@ -806,6 +879,109 @@ const CrmDetails = () => {
             </Collapse>
           </Col>
         </Form>
+        {assignForm && (
+          <Form>
+            <Row gutter={16} style={{ marginTop: 24 }}>
+              <Col xs={24} md={8}>
+                <Form.Item
+                  label={<Text strong>Organization</Text>}
+                  name="organization"
+                  rules={[
+                    { required: true, message: "Organization is required" },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select Organization"
+                    size="large"
+                    style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                    onChange={async (value) => {
+                      form.setFieldsValue({ organization: value, branch: "" });
+                      await fetchBranch(value);
+                    }}
+                  >
+                    {organizationNames.map((org) => (
+                      <Option key={org} value={org}>
+                        {org}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={8}>
+                <Form.Item
+                  label={<Text strong>Branch</Text>}
+                  name="branch"
+                  rules={[{ required: true, message: "Branch is required" }]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select Branch"
+                    size="large"
+                    style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                    onChange={async (value) => {
+                      form.setFieldsValue({ branch: value, cmname: "" });
+                      await fetchCmNames(form.getFieldValue("organization"), value);
+                    }}
+                  >
+                    {branchNames.map((item, idx) => (
+                      <Select.Option key={idx} value={item.branch}>
+                        {item.branch}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+
+              <Col xs={24} md={8}>
+                <Form.Item
+                  label={<Text strong>CM Name</Text>}
+                  name="cmname"
+                // rules={[{ required: true, message: "CM is required" }]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select CM"
+                    size="large"
+                    style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                  >
+                    {cmNames.map((item, idx) => (
+                      <Select.Option key={idx} value={item}>
+                        {item}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                style={{ background: "#3e4396" }}
+                onClick={() => form.submit()}
+              >
+                Assign
+              </Button>
+            </Row>
+          </Form>
+        )}
+        {!assignForm && (
+          <Button
+            type="primary"
+            onClick={() => {
+              setAssingForm(true);
+            }}
+            style={{
+              marginTop: 16,
+              backgroundColor: "#3e4396",
+              color: "#fff",
+              fontWeight: "bold",
+            }}
+          >
+            Create New Branch
+          </Button>
+        )}
         {/* Form Actions moved outside the Form to keep buttons always enabled */}
         <Row justify="end" style={{ marginTop: 32 }} gutter={16}>
           {!isEditing ? (
@@ -845,7 +1021,9 @@ const CrmDetails = () => {
             </>
           )}
         </Row>
+
       </div>
+
     </>
   );
 };

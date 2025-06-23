@@ -113,7 +113,8 @@ const NewExperiences = () => {
     const fetchTickets = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/v1/getAllExperiences`
+          `${process.env.REACT_APP_API_URL}/v1/getAllNewExperiences`,
+          // "http://127.0.0.1:8080/v1/getAllNewExperiences",
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.data)) {

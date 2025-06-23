@@ -50,15 +50,15 @@ const CmForm = () => {
   const fileInputRef = useRef(null);
   const [organizationNames, setOrganizationNames] = useState([]);
   const [branchNames, setBranchNames] = useState([]);
-  const [crmIdList, setCrmIdList] = useState([]);
-  const [crmName, setCrmName] = useState("");
+  const [crmNameList, setCrmNameList] = useState([]);
 
   //  const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/v1/getAllOrgs`
+          `${process.env.REACT_APP_API_URL}/v1/getAllOrganizationnames`
+          // "http://127.0.0.1:8080/v1/getAllOrganizationnames",
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.data)) {
@@ -66,47 +66,34 @@ const CmForm = () => {
             data.data.map((item) => item.organizationname || "N/A")
           );
         }
-      } catch (error) {}
+      } catch (error) { }
     };
     fetchTickets();
   }, []);
-  const crmidValue = form.getFieldValue("crmid");
+  // const crmidValue = form.getFieldValue("crmid");
+
+  // useEffect(() => {
+  //   const fetchCrmNames = async () => {
+  //     const res = await fetch(`${process.env.REACT_APP_API_URL}/v1/GetCrmNames`);
+  //     const data = await res.json();
+  //     setCrmNameList(data.data || []);
+  //   };
+  //   fetchCrmNames();
+  // }, []);
 
   useEffect(() => {
-    // Fetch CRM IDs for dropdown
-    const fetchCrmIds = async () => {
+    const fetchCrmNames = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/v1/getCrmId`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          // The backend returns { crmid: [ { crmid: "CRM_017" }, ... ] }
-          if (Array.isArray(data.crmid)) {
-            setCrmIdList(data.crmid.map((item) => item.crmid));
-          }
-        }
-      } catch (error) {
-        // handle error
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/GetCrmNames`);
+        const data = await res.json();
+        setCrmNameList(data.data || []);
+      } catch {
+        setCrmNameList([]);
       }
     };
-    fetchCrmIds();
+    fetchCrmNames();
   }, []);
 
-  useEffect(() => {
-    // if (!isEditing) return;
-    if (crmidValue) {
-      fetch(`${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCrmName(data.crmNames || "");
-          form.setFieldsValue({ crmname: data.crmNames || "" });
-        });
-    } else {
-      setCrmName("");
-      form.setFieldsValue({ crmname: "" });
-    }
-  }, [crmidValue, form]);
 
   const fetchBranch = async (orgName) => {
     try {
@@ -123,7 +110,7 @@ const CmForm = () => {
           setBranchNames([]);
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleImageUpload = (event) => {
@@ -196,7 +183,7 @@ const CmForm = () => {
 
   const handleFormSubmit = async (values) => {
     setIsLoading(true);
-    console.log(crmName);
+    // console.log(crmName);
     const formData = new FormData();
 
     // Use the exact field names as in your form and backend
@@ -214,7 +201,7 @@ const CmForm = () => {
     formData.append("crmName", values.crmname || "");
 
     const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
-    const createrrole = sessionData?.extraind10 || "hob";
+    const createrrole = "hob";
     const createrid = sessionData?.hobid || "";
     const password = (values.firstName || "") + (values.PhoneNo || "");
     formData.append("createrrole", createrrole);
@@ -235,15 +222,11 @@ const CmForm = () => {
       } catch (error) {
         console.error("Error converting image to blob:", error);
       }
-    } else {
-      // Modal.warning({ content: "Please upload a profile image." });
-      message.warning("Please upload a profile image.");
-      setIsLoading(false);
-      return;
     }
     try {
       await axios.post(
         `${process.env.REACT_APP_API_URL}/v1/createCm`,
+        // `http://127.0.0.1:8080/v1/createCm`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -480,7 +463,7 @@ const CmForm = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xs={24} md={8}>
+            {/* <Col xs={24} md={8}>
               <Form.Item
                 label={<Text strong>Designation</Text>}
                 name="designation"
@@ -492,7 +475,7 @@ const CmForm = () => {
                   style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col xs={24} md={8}>
               <Form.Item
                 label={<Text strong>Organization</Text>}
@@ -531,42 +514,9 @@ const CmForm = () => {
                   size="large"
                   style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
                 >
-                  {branchNames.map((b) => (
-                    <Option key={b} value={b}>
-                      {b}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={8}>
-              <Form.Item
-                label={<Text strong>CRM ID</Text>}
-                name="crmid"
-                rules={[{ required: true, message: "CRM ID is required" }]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Select CRM ID"
-                  optionFilterProp="children"
-                  size="large"
-                  onChange={async (value) => {
-                    try {
-                      const res = await fetch(
-                        `${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${value}`
-                      );
-                      const data = await res.json();
-                      setCrmName(data.crmNames || "");
-                      form.setFieldsValue({ crmname: data.crmNames || "" });
-                    } catch {
-                      setCrmName("");
-                      form.setFieldsValue({ crmname: "" });
-                    }
-                  }}
-                >
-                  {crmIdList.map((id) => (
-                    <Select.Option key={id} value={id}>
-                      {id}
+                  {branchNames.map((item, idx) => (
+                    <Select.Option key={idx} value={item.branch}>
+                      {item.branch}
                     </Select.Option>
                   ))}
                 </Select>
@@ -574,11 +524,29 @@ const CmForm = () => {
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
-                label={<Text strong>CRM Name</Text>}
+                label="CRM Name"
                 name="crmname"
                 rules={[{ required: true, message: "CRM Name is required" }]}
               >
-                <Input placeholder="CRM Name" disabled readOnly size="large" />
+                <Select
+                  showSearch
+                  placeholder="Select CRM NAME"
+                  optionFilterProp="children"
+                  size="large"
+                  onChange={(value, option) => {
+                    // value is crmid, option.children is the name
+                    form.setFieldsValue({ crmname: option.children, crmid: value });
+                  }}
+                >
+                  {crmNameList.map((crm) => (
+                    <Select.Option key={crm.crmid} value={crm.crmid}>
+                      {crm.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item name="crmid" style={{ display: "none" }}>
+                <Input />
               </Form.Item>
             </Col>
           </Row>

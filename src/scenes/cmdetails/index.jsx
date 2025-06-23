@@ -19,6 +19,7 @@ import { Country } from "country-state-city";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
+const { Option } = Select;
 
 function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   const cropWidth = mediaWidth * 0.9;
@@ -47,6 +48,8 @@ const CmDetails = () => {
   const location = useLocation();
   const Navigate = useNavigate();
   const [crmIdList, setCrmIdList] = useState([]);
+    const [organizationNames, setOrganizationNames] = useState([]);
+    const [branchNames, setBranchNames] = useState([]);
 
   // Add state for CRM Name
   const [crmName, setCrmName] = useState("");
@@ -130,6 +133,58 @@ const CmDetails = () => {
     }
   }, [isEditing, crmidValue, form]);
 
+
+    // useEffect(() => {
+    //   const fetchTickets = async () => {
+    //     try {
+    //       const response = await fetch(
+    //         `${process.env.REACT_APP_API_URL}/v1/getAllOrganizationnames`
+    //         // "http://127.0.0.1:8080/v1/getAllOrganizationnames",
+    //       );
+    //       const data = await response.json();
+    //       if (response.ok && Array.isArray(data.data)) {
+    //         setOrganizationNames(
+    //           data.data.map((item) => item.organizationname || "N/A")
+    //         );
+    //       }
+    //     } catch (error) { }
+    //   };
+    //   fetchTickets();
+    // }, []);
+
+
+      useEffect(() => {
+        const fetchOrganizationNames = async () => {
+          try {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/v1/getAllOrganizationnames`);
+            const data = await res.json();
+            setOrganizationNames(data.data || []);
+          } catch {
+            setOrganizationNames([]);
+          }
+        };
+        fetchOrganizationNames();
+      }, []);
+
+
+  const fetchBranch = async (orgName) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/v1/getBranchbyOrganizationname/${orgName}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.branchDetails)) {
+          setBranchNames(data.branchDetails);
+        } else if (typeof data.branchDetails === "string") {
+          setBranchNames([data.branchDetails]);
+        } else {
+          setBranchNames([]);
+        }
+      }
+    } catch (error) { }
+  };
+
   const handleFormSubmit = async (values) => {
     // Build FormData for multipart/form-data
     setIsLoading(true);
@@ -145,7 +200,7 @@ const CmDetails = () => {
       "crmname",
       values.crmname || values.customerrelationshipmanagername
     );
-    formData.append("organizationid", values.organizationid || "");
+    formData.append("organizationid", ticket.organizationid || "");
     formData.append(
       "organizationname",
       values.organization || values.organizationname
@@ -170,10 +225,9 @@ const CmDetails = () => {
       branch: values.branch || "",
     });
 
-    const sessionData = JSON.parse(sessionStorage.getItem("userDetails")); // replace with your actual key
-    const createrrole = sessionData?.extraind10 || "";
-    const createrid =
-      sessionData?.adminid || sessionData?.crmid || sessionData?.hobid || "";
+    const sessionData = JSON.parse(sessionStorage.getItem("hobDetails")); // replace with your actual key
+    const createrrole =  "hob";
+    const createrid = sessionData?.hobid || "";
     formData.append("createrrole", createrrole);
     formData.append("createrid", createrid);
 
@@ -196,6 +250,7 @@ const CmDetails = () => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/v1/updateCmProfileByAdminHob`,
+        // "http://127.0.0.1:8080/v1/updateCmProfileByAdminHob",
         {
           method: "POST",
           body: formData,
@@ -483,7 +538,7 @@ const CmDetails = () => {
               </Form.Item>
             </Col>
 
-            <Col xs={24} md={8}>
+            {/* <Col xs={24} md={8}>
               <Form.Item
                 label={<Text strong>Organization Id</Text>}
                 name="organizationid"
@@ -497,30 +552,70 @@ const CmDetails = () => {
                   size="large"
                 />
               </Form.Item>
-            </Col>
-            <Col xs={24} md={8}>
+            </Col> */}
+
+            {/* <Col xs={24} md={8}>
               <Form.Item
-                label={<Text strong>Organization Name</Text>}
-                name="organizationname"
-                rules={[
-                  { required: true, message: "Organization name is required" },
-                ]}
+                label={<Text strong>Designation</Text>}
+                name="designation"
+                rules={[{ required: true, message: "Designation is required" }]}
               >
                 <Input
-                  placeholder="Organization Name"
-                  disabled={true}
+                  placeholder="Designation"
                   size="large"
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
                 />
               </Form.Item>
-            </Col>
-
+            </Col> */}
             <Col xs={24} md={8}>
               <Form.Item
-                label={<Text strong>Branch Name</Text>}
-                name="branch"
-                rules={[{ required: true, message: "Branch name is required" }]}
+                label={<Text strong>Organization</Text>}
+                name="organizationname"
+                rules={[
+                  { required: true, message: "Organization is required" },
+                ]}
               >
-                <Input placeholder="Branch Name" disabled={true} size="large" />
+                <Select
+                  showSearch
+                  placeholder="Select Organization"
+                  disabled={!isEditing}
+                  size="large"
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                  onChange={(value, option) => {
+                    // value is crmid, option.children is the name
+                    form.setFieldsValue({ organizationname: option.children, organizationid: value });
+                  }}
+                >
+                  {organizationNames.map((org) => (
+                    <Select.Option key={org.organizationid} value={org.organizationid}>
+                      {org.organizationname}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+                 <Form.Item name="organizationid" style={{ display: "none" }}>
+                              <Input />
+                  </Form.Item>
+            </Col>
+            <Col xs={24} md={8}>
+              <Form.Item
+                label={<Text strong>Branch</Text>}
+                name="branch"
+                rules={[{ required: true, message: "Branch is required" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select Branch"
+                         disabled={!isEditing}
+                  size="large"
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                >
+                  {branchNames.map((item, idx) => (
+                    <Select.Option key={idx} value={item.branch}>
+                      {item.branch}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
 
@@ -586,6 +681,7 @@ const CmDetails = () => {
               <Form.Item
                 label={<Text strong>Gender</Text>}
                 name="gender"
+                      
                 rules={[{ required: true, message: "Gender is required" }]}
               >
                 <Select
@@ -636,7 +732,7 @@ const CmDetails = () => {
                     // Fetch CRM Name on change
                     try {
                       const res = await fetch(
-                        `${process.env.REACT_APP_API_URL}api/v1/getCrmNamebyId/${value}`
+                        `${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${value}`
                       );
                       const data = await res.json();
                       setCrmName(data.crmNames || "");

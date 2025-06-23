@@ -237,29 +237,7 @@ const OrganizationForm = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col xs={24} md={8}>
-                  <Form.Item
-                    label={<b>Branch Type</b>}
-                    name={[index, "branchtype"]}
-                    rules={[
-                      { required: true, message: "Branch Type is required" },
-                    ]}
-                  >
-                    <Select
-                      value={branch.branchtype}
-                      onChange={(value) => {
-                        const updated = [...branchInstances];
-                        updated[index].branchtype = value;
-                        setBranchInstances(updated);
-                      }}
-                      size="large"
-                      style={{ width: "100%", marginBottom: 12 }}
-                    >
-                      <Select.Option value="Parent">Parent</Select.Option>
-                      <Select.Option value="Branch">Branch</Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
+
                 <Col xs={24} md={8}>
                   <Form.Item label={<b>Phone Number</b>} required>
                     <Input.Group compact>
@@ -486,14 +464,14 @@ const OrganizationForm = () => {
               </Row>
             </Box>
           ))}
-          <Box display="flex" justifyContent="flex-start" mt="10px" gap="10px">
-            <Button
+          <Box display="flex" justifyContent="flex-end" mt="10px" gap="10px">
+            {/* <Button
               type="dashed"
               onClick={handleAddBranch}
               style={{ padding: "8px 16px", borderRadius: 8, fontWeight: 600 }}
             >
               + Add Branch
-            </Button>
+            </Button> */}
             <Button
               type="primary"
               htmlType="submit"

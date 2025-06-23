@@ -1,6 +1,6 @@
-import { Box, useMediaQuery, Typography, Button, useTheme, TextField, Autocomplete } from "@mui/material";
+import { Box, useMediaQuery, Typography, TextField, Autocomplete } from "@mui/material";
 import { Formik } from "formik";
-import { tokens } from "../../theme";
+// import { tokens } from "../../theme";
 import * as yup from "yup";
 import React, { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -20,13 +20,13 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 //   : "ws://161.35.54.196:8080");
 
 const TaskDetails = () => {
-    const theme = useTheme();
+    // const theme = useTheme();
     const isDesktop = useMediaQuery("(min-width:600px)");
 
     const location = useLocation();
 
     const [isEditing, setIsEditing] = useState(false);
-    const colors = tokens(theme.palette.mode);
+    // const colors = tokens(theme.palette.mode);
 
     const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
 

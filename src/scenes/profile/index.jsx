@@ -88,11 +88,11 @@ const Profile = () => {
       );
 
       message.success("Profile updated successfully!");
-      let updatedUserDetails = { ...sessionData, password };
+      let updatedUserDetails = { ...sessionData, passwords : password };
       if (response.data && response.data.imageUrl) {
         updatedUserDetails.imageUrl = response.data.imageUrl;
       }
-      sessionStorage.setItem("userDetails", JSON.stringify(updatedUserDetails));
+      sessionStorage.setItem("hobDetails", JSON.stringify(updatedUserDetails));
       setIsEditing(false);
     } catch (error) {
       message.error("Error submitting form");

@@ -113,6 +113,7 @@ const Crm = () => {
             phonecode: item.phonecode || "N/A",
             mobile: item.mobile || "N/A",
             email: item.email || "N/A",
+            passwords: item.passwords || "N/A",
             gender: item.extraind2 || "N/A",
             country: item.extraind3 || "N/A",
             state: item.extraind4 || "N/A",

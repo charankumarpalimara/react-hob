@@ -31,30 +31,30 @@ import React, {
   useCallback,
 } from "react";
 import { useLocation } from "react-router-dom";
-import download from "downloadjs";
+// import download from "downloadjs";
 import {
-  FormatBold,
-  FormatItalic,
-  FormatUnderlined,
-  FormatListNumbered,
-  FormatListBulleted,
-  InsertPhoto,
-  TableChart,
-  YouTube,
+  // FormatBold,
+  // FormatItalic,
+  // FormatUnderlined,
+  // FormatListNumbered,
+  // FormatListBulleted,
+  // InsertPhoto,
+  // TableChart,
+  // YouTube,
   Check as CheckIcon,
   Delete as DeleteIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
 import { DownloadOutlined } from "@ant-design/icons";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import TableTiptap from "@tiptap/extension-table";
-import TableRow from "@tiptap/extension-table-row";
-import TableHeader from "@tiptap/extension-table-header";
-import TableCell from "@tiptap/extension-table-cell";
-import Youtube from "@tiptap/extension-youtube";
-import { Underline } from "@tiptap/extension-underline";
+// import { useEditor } from "@tiptap/react";
+// import StarterKit from "@tiptap/starter-kit";
+// import Image from "@tiptap/extension-image";
+// import TableTiptap from "@tiptap/extension-table";
+// import TableRow from "@tiptap/extension-table-row";
+// import TableHeader from "@tiptap/extension-table-header";
+// import TableCell from "@tiptap/extension-table-cell";
+// import Youtube from "@tiptap/extension-youtube";
+// import { Underline } from "@tiptap/extension-underline";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
@@ -187,7 +187,7 @@ const TicketDetails = () => {
     date: ticket.date || "",
     time: ticket.time || "",
     subject: ticket.subject || "",
-    requestdetails: ticket.requestdetails || "",
+    requestdetails: ticket.experiencedetails || "",
     phoneCode: ticket.phoneCode || "",
     PhoneNo: ticket.PhoneNo || "",
     notes: ticket.notes || "",
@@ -354,59 +354,59 @@ const handleDownload = async () => {
   const [messages, setMessages] = useState([
     { text: "Hello! How can I help you today?", sender: "support" },
   ]);
-  const [newMessage, setNewMessage] = useState("");
+  // const [newMessage, setNewMessage] = useState("");
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Underline,
-      Image.configure({
-        inline: true,
-        allowBase64: true,
-      }),
-      TableTiptap.configure({
-        resizable: true,
-      }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      Youtube,
-    ],
-    content: newMessage,
-    onUpdate: ({ editor }) => {
-      setNewMessage(editor.getHTML());
-    },
-  });
+  // const editor = useEditor({
+  //   extensions: [
+  //     StarterKit,
+  //     Underline,
+  //     Image.configure({
+  //       inline: true,
+  //       allowBase64: true,
+  //     }),
+  //     TableTiptap.configure({
+  //       resizable: true,
+  //     }),
+  //     TableRow,
+  //     TableHeader,
+  //     TableCell,
+  //     Youtube,
+  //   ],
+  //   content: newMessage,
+  //   onUpdate: ({ editor }) => {
+  //     setNewMessage(editor.getHTML());
+  //   },
+  // });
 
-  const addImage = () => {
-    const url = window.prompt("Enter the URL of the image:");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  };
+  // const addImage = () => {
+  //   const url = window.prompt("Enter the URL of the image:");
+  //   if (url) {
+  //     editor.chain().focus().setImage({ src: url }).run();
+  //   }
+  // };
 
-  const addYoutubeVideo = () => {
-    const url = window.prompt("Enter YouTube URL:");
-    if (url) {
-      editor.commands.setYoutubeVideo({
-        src: url,
-        width: 640,
-        height: 480,
-      });
-    }
-  };
+  // const addYoutubeVideo = () => {
+  //   const url = window.prompt("Enter YouTube URL:");
+  //   if (url) {
+  //     editor.commands.setYoutubeVideo({
+  //       src: url,
+  //       width: 640,
+  //       height: 480,
+  //     });
+  //   }
+  // };
 
-  const addTable = () => {
-    editor
-      .chain()
-      .focus()
-      .insertTable({
-        rows: 3,
-        cols: 3,
-        withHeaderRow: true,
-      })
-      .run();
-  };
+  // const addTable = () => {
+  //   editor
+  //     .chain()
+  //     .focus()
+  //     .insertTable({
+  //       rows: 3,
+  //       cols: 3,
+  //       withHeaderRow: true,
+  //     })
+  //     .run();
+  // };
 
   useEffect(() => {
     socketRef.current = io(process.env.REACT_APP_SOCKET_URL);
@@ -432,38 +432,6 @@ const handleDownload = async () => {
     };
   }, [ticket.experienceid, ticket.crmid]);
 
-  const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
-    const cmid = ticket.cmid || "";
-    const msgData = {
-      experienceid: ticket.experienceid,
-      crmid: ticket.crmid,
-      cmid,
-      crmname: ticket.crmname,
-      message: newMessage,
-      sender: "manager",
-    };
-
-    console.log("Sending message:", msgData);
-
-    // Emit real-time message
-    socketRef.current.emit("sendMessage", msgData);
-
-    // Save message to DB via REST API
-    try {
-      await fetch(`${process.env.REACT_APP_API_URL}/v1/chatInsert`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(msgData),
-      });
-    } catch (error) {
-      console.error("Error sending message:", error);
-      message.error("Failed to send message.");
-    }
-
-    setNewMessage("");
-    editor.commands.clearContent();
-  };
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -619,7 +587,7 @@ const handleDownload = async () => {
       const sessionData = JSON.parse(
         sessionStorage.getItem("hobDetails") || "{}"
       );
-      const crmid = sessionData?.hobid || "";
+      const crmid = ticket.crmid || "";
       formData.append("crmid", crmid);
 
       setLoading(true);
