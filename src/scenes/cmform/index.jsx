@@ -72,27 +72,28 @@ const CmForm = () => {
   }, []);
   // const crmidValue = form.getFieldValue("crmid");
 
-  // useEffect(() => {
-  //   const fetchCrmNames = async () => {
-  //     const res = await fetch(`${process.env.REACT_APP_API_URL}/v1/GetCrmNames`);
-  //     const data = await res.json();
-  //     setCrmNameList(data.data || []);
-  //   };
-  //   fetchCrmNames();
-  // }, []);
-
   useEffect(() => {
     const fetchCrmNames = async () => {
-      try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/GetCrmNames`);
-        const data = await res.json();
-        setCrmNameList(data.data || []);
-      } catch {
-        setCrmNameList([]);
-      }
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/v1/GetCrmNames`);
+      const data = await res.json();
+      setCrmNameList(data.data || []);
     };
     fetchCrmNames();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchCrmNames = async () => {
+  //     try {
+  //       // const res = await fetch(`${process.env.REACT_APP_API_URL}/GetCrmNames`);
+  //       const res = await fetch(`http://127.0.0.1:8080/GetCrmNames`);
+  //       const data = await res.json();
+  //       setCrmNameList(data.data || []);
+  //     } catch {
+  //       setCrmNameList([]);
+  //     }
+  //   };
+  //   fetchCrmNames();
+  // }, []);
 
 
   const fetchBranch = async (orgName) => {
@@ -533,21 +534,24 @@ const CmForm = () => {
                   placeholder="Select CRM Name"
                   optionFilterProp="children"
                   size="large"
-                  onChange={(value, option) => {
-                    // value is crmid, option.children is the name
-                    form.setFieldsValue({ crmname: option.children, crmid: value });
+                  onChange={(value) => {
+                    const selected = crmNameList.find(crm => crm.crmid === value);
+                    form.setFieldsValue({
+                      crmname: selected ? selected.name : "",
+                      crmid: value
+                    });
                   }}
                 >
                   {crmNameList.map((crm) => (
                     <Select.Option key={crm.crmid} value={crm.crmid}>
-                      {crm.name}
+                      {crm.name} ({crm.crmid})
                     </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
-              <Form.Item name="crmid" style={{ display: "none" }}>
-                <Input />
-              </Form.Item>
+              {/* <Form.Item label="CRM ID" name="crmid">
+                <Input disabled />
+              </Form.Item> */}
             </Col>
           </Row>
           <Row justify="end" style={{ marginTop: 32 }} gutter={16}>
