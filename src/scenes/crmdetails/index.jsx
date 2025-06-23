@@ -12,6 +12,7 @@ import {
   message,
   Collapse,
   Spin,
+  Space
 
 } from "antd";
 import { CameraOutlined } from "@ant-design/icons";
@@ -100,7 +101,7 @@ const CrmDetails = () => {
         setRelationsData((prev) => prev.filter((item) => item.id !== id));
         setIsEditing(false);
         message.success("Relation deleted successfully");
-       setIsLoading(false);
+        setIsLoading(false);
       } else {
         const errorData = await response.json();
         message.error(
@@ -203,7 +204,7 @@ const CrmDetails = () => {
         u8arr[n] = bstr.charCodeAt(n);
       }
       const file = new Blob([u8arr], { type: mime });
-       formData.append("crmProfileImageBySelf", file, "profile.jpg");
+      formData.append("crmProfileImageBySelf", file, "profile.jpg");
     }
     try {
       const response = await fetch(
@@ -274,7 +275,8 @@ const CrmDetails = () => {
   const fetchCmNames = async (orgName, branch) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
+        // `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
+        "http://127.0.0.1:8080/v1/GetCmNames",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -293,6 +295,61 @@ const CrmDetails = () => {
       setCmNames([]);
     }
   };
+
+
+
+
+
+
+  const handleAssign = async (values) => {
+    try {
+      setIsLoading(true);
+
+      // Prepare the data to log
+      const sessionData = JSON.parse(sessionStorage.getItem("hobDetails")); // replace with your actual key
+      const createrrole = "hob";
+      const createrid = sessionData?.hobid || "";
+
+      // Log the values that will be sent
+      const payload = {
+        organization: values.organization,
+        branch: values.branch,
+        cmid: values.cmid,
+        cmname: values.cmname,
+        crmid: ticket.crmid,
+        crmname: ticket.firstname + " " + ticket.lastname,
+        createrid: createrid || "",
+        createrrole: createrrole || "",
+      };
+      console.log("Assign Payload:", payload);
+
+      // Prepare FormData
+      const formData = new FormData();
+      Object.entries(payload).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const response = await fetch("http://127.0.0.1:8080/v1/createRelation", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (response.ok) {
+        message.success("Assigned successfully!");
+
+        setAssingForm(false);
+        form.resetFields(["organization", "branch", "cmname"]);
+      } else {
+        message.error(data?.error || "Assignment failed");
+      }
+    } catch (error) {
+      message.error("Assignment failed");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
 
 
   useEffect(() => {
@@ -880,15 +937,13 @@ const CrmDetails = () => {
           </Col>
         </Form>
         {assignForm && (
-          <Form>
-            <Row gutter={16} style={{ marginTop: 24 }}>
+          <Form layout="vertical" form={form} onFinish={handleAssign}  >
+            <Row gutter={16} style={{ marginTop: 24, alignItems: "center" }}>
               <Col xs={24} md={8}>
                 <Form.Item
                   label={<Text strong>Organization</Text>}
                   name="organization"
-                  rules={[
-                    { required: true, message: "Organization is required" },
-                  ]}
+                  rules={[{ required: true, message: "Organization is required" }]}
                 >
                   <Select
                     showSearch
@@ -901,9 +956,9 @@ const CrmDetails = () => {
                     }}
                   >
                     {organizationNames.map((org) => (
-                      <Option key={org} value={org}>
+                      <Select.Option key={org} value={org}>
                         {org}
-                      </Option>
+                      </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
@@ -932,37 +987,57 @@ const CrmDetails = () => {
                   </Select>
                 </Form.Item>
               </Col>
-
-
               <Col xs={24} md={8}>
                 <Form.Item
-                  label={<Text strong>CM Name</Text>}
+                  label="CM Name"
                   name="cmname"
-                // rules={[{ required: true, message: "CM is required" }]}
+                  rules={[{ required: true, message: "CM Name is required" }]}
                 >
                   <Select
                     showSearch
-                    placeholder="Select CM"
+                    placeholder="Select CM Name"
+                    optionFilterProp="children"
                     size="large"
-                    style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                    onChange={(value) => {
+                      const selected = cmNames.find(cm => cm.cmid === value);
+                      form.setFieldsValue({
+                        cmname: selected ? selected.name : "",
+                        cmid: value
+                      });
+                    }}
                   >
-                    {cmNames.map((item, idx) => (
-                      <Select.Option key={idx} value={item}>
-                        {item}
-                      </Select.Option>
-                    ))}
+                    {cmNames
+                      .filter(cm => cm && cm.cmid && cm.name)
+                      .map((cm) => (
+                        <Select.Option key={cm.cmid} value={cm.cmid}>
+                          {cm.name} 
+                        </Select.Option>
+                      ))}
                   </Select>
                 </Form.Item>
+
+                {/* Show cmid in an input below */}
+                <Form.Item label="CM ID" name="cmid" style={{ display: 'none' }}>
+                  <Input disabled />
+                </Form.Item>
               </Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                style={{ background: "#3e4396" }}
-                onClick={() => form.submit()}
-              >
-                Assign
-              </Button>
+               <Row gutter={16} style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Col>
+                  <Space>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      size="large"
+                      style={{ background: "#3e4396" }}
+                    >
+                      Assign
+                    </Button>
+                    <Button size="large" danger onClick={() => setAssingForm(false)}>
+                      Cancel
+                    </Button>
+                  </Space>
+                </Col>
+              </Row>
             </Row>
           </Form>
         )}

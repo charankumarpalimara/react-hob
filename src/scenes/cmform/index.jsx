@@ -530,7 +530,7 @@ const CmForm = () => {
               >
                 <Select
                   showSearch
-                  placeholder="Select CRM NAME"
+                  placeholder="Select CRM Name"
                   optionFilterProp="children"
                   size="large"
                   onChange={(value, option) => {
