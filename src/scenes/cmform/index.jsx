@@ -51,6 +51,8 @@ const CmForm = () => {
   const [organizationNames, setOrganizationNames] = useState([]);
   const [branchNames, setBranchNames] = useState([]);
   const [crmNameList, setCrmNameList] = useState([]);
+    const [showEditModal, setShowEditModal] = useState(false);
+  const [editValues, setEditValues] = useState({});
 
   //  const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
   useEffect(() => {
@@ -276,13 +278,81 @@ const CmForm = () => {
               </div> */}
         </div>
       )}
+
+
+            <Modal
+              open={showEditModal}
+              title="Review & Edit CM Details"
+              onCancel={() => setShowEditModal(false)}
+              onOk={() => handleFormSubmit(editValues)} // Pass the edited values to submit
+              okText="Update"
+              cancelText="Cancel"
+              confirmLoading={isLoading}
+              okButtonProps={{
+                style: {
+                  background: "#3e4396",
+                  borderColor: "#3e4396",
+                  color: "#fff",
+                  fontWeight: "bold",
+                },
+              }}
+             >
+          <Form
+            layout="vertical"
+            initialValues={editValues}
+            onValuesChange={(_, allValues) => setEditValues(allValues)}
+          >
+          <Form.Item label="First Name" name="firstName" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Last Name" name="lastName" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Email" name="email" rules={[{ required: true, type: "email" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Phone Code" name="phoneCode" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Phone Number" name="PhoneNo" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
+            <Select>
+              <Option value="Male">Male</Option>
+              <Option value="Female">Female</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Organization" name="organization" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Branch" name="branch" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="CRM Name" name="crmname" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="CRM Id" name="crmid" style={{display:"none"}} rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+
+
+
+
       <div
         style={{ background: "#fff", borderRadius: 8, padding: 24, margin: 16 }}
       >
         <Form
           form={form}
           layout="vertical"
-          onFinish={handleFormSubmit}
+            onFinish={(values) => {
+            setEditValues(values);      // <-- set the values to show in modal
+            setShowEditModal(true);     // <-- open the modal
+          }}
           initialValues={{
             firstName: "",
             lastName: "",
@@ -549,9 +619,9 @@ const CmForm = () => {
                   ))}
                 </Select>
               </Form.Item>
-              {/* <Form.Item label="CRM ID" name="crmid">
+              <Form.Item label="CRM ID" name="crmid" style={{ display: "none" }}>
                 <Input disabled />
-              </Form.Item> */}
+              </Form.Item>
             </Col>
           </Row>
           <Row justify="end" style={{ marginTop: 32 }} gutter={16}>
