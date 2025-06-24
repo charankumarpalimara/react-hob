@@ -19,7 +19,7 @@ import { Country } from "country-state-city";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
-const { Option } = Select;
+// const { Option } = Select;
 
 function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   const cropWidth = mediaWidth * 0.9;
@@ -52,7 +52,7 @@ const CmDetails = () => {
     const [branchNames, setBranchNames] = useState([]);
 
   // Add state for CRM Name
-  const [crmName, setCrmName] = useState("");
+  const [crmNameList, setCrmNameList] = useState([]);
 
   const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
 
@@ -90,7 +90,7 @@ const CmDetails = () => {
   const [form] = Form.useForm();
 
   // Extract crmid for useEffect dependency (must be after form is defined)
-  const crmidValue = form.getFieldValue("crmid");
+  // const crmidValue = form.getFieldValue("crmid");
 
   useEffect(() => {
     form.setFieldsValue(initialValues);
@@ -118,20 +118,20 @@ const CmDetails = () => {
   }, [ticket]);
 
   // When CRM ID changes, fetch CRM Name
-  useEffect(() => {
-    if (!isEditing) return;
-    if (crmidValue) {
-      fetch(`${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCrmName(data.crmNames || "");
-          form.setFieldsValue({ crmname: data.crmNames || "" });
-        });
-    } else {
-      setCrmName("");
-      form.setFieldsValue({ crmname: "" });
-    }
-  }, [isEditing, crmidValue, form]);
+  // useEffect(() => {
+  //   if (!isEditing) return;
+  //   if (crmidValue) {
+  //     fetch(`${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${crmidValue}`)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         setCrmName(data.crmNames || "");
+  //         form.setFieldsValue({ crmname: data.crmNames || "" });
+  //       });
+  //   } else {
+  //     setCrmName("");
+  //     form.setFieldsValue({ crmname: "" });
+  //   }
+  // }, [isEditing, crmidValue, form]);
 
 
     // useEffect(() => {
@@ -165,6 +165,16 @@ const CmDetails = () => {
         };
         fetchOrganizationNames();
       }, []);
+
+
+        useEffect(() => {
+    const fetchCrmNames = async () => {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/v1/GetCrmNames`);
+      const data = await res.json();
+      setCrmNameList(data.data || []);
+    };
+    fetchCrmNames();
+  }, []);
 
 
   const fetchBranch = async (orgName) => {
@@ -599,13 +609,13 @@ const CmDetails = () => {
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
-                label={<Text strong>Branch</Text>}
+                label={<Text strong>Organization Unit</Text>}
                 name="branch"
-                rules={[{ required: true, message: "Branch is required" }]}
+                rules={[{ required: true, message: "Organization Unit is required" }]}
               >
                 <Select
                   showSearch
-                  placeholder="Select Branch"
+                  placeholder="Select Organization Unit"
                          disabled={!isEditing}
                   size="large"
                   style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
@@ -716,52 +726,35 @@ const CmDetails = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xs={24} md={8}>
+                    <Col xs={24} md={8}>
               <Form.Item
-                label={<Text strong>CRM ID</Text>}
-                name="crmid"
-                rules={[{ required: true, message: "CRM ID is required" }]}
+                label="CRM Name"
+                name="crmname"
+                rules={[{ required: true, message: "CRM Name is required" }]}
               >
                 <Select
                   showSearch
-                  placeholder="Select CRM ID"
+                  placeholder="Select CRM Name"
                   optionFilterProp="children"
                   disabled={!isEditing}
                   size="large"
-                  onChange={async (value) => {
-                    // Fetch CRM Name on change
-                    try {
-                      const res = await fetch(
-                        `${process.env.REACT_APP_API_URL}/v1/getCrmNamebyId/${value}`
-                      );
-                      const data = await res.json();
-                      setCrmName(data.crmNames || "");
-                      form.setFieldsValue({ crmname: data.crmNames || "" });
-                    } catch {
-                      setCrmName("");
-                      form.setFieldsValue({ crmname: "" });
-                    }
+                  onChange={(value) => {
+                    const selected = crmNameList.find(crm => crm.crmid === value);
+                    form.setFieldsValue({
+                      crmname: selected ? selected.name : "",
+                      crmid: value
+                    });
                   }}
                 >
-                  {crmIdList.map((id) => (
-                    <Select.Option key={id} value={id}>
-                      {id}
+                  {crmNameList.map((crm) => (
+                    <Select.Option key={crm.crmid} value={crm.crmid}>
+                      {crm.name} ({crm.crmid})
                     </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
-            </Col>
-
-            {/* CRM Name Input (auto-filled) */}
-            <Col xs={24} md={8}>
-              <Form.Item label={<Text strong>CRM Name</Text>} name="crmname">
-                <Input
-                  placeholder="CRM Name"
-                  value={crmName}
-                  disabled
-                  readOnly
-                  size="large"
-                />
+              <Form.Item label="CRM ID" name="crmid" style={{ display: "none" }}>
+                <Input disabled />
               </Form.Item>
             </Col>
           </Row>

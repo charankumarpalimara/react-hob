@@ -208,10 +208,10 @@ const handleFormSubmit = async () => {
                 </Col>
                 <Col xs={24} md={8}>
                   <Form.Item
-                    label="Branch Name"
+                    label="Branch Unit"
                     name={[index, "branch"]}
                     rules={[
-                      { required: true, message: "Branch Name is required" },
+                      { required: true, message: "Branch Unit is required" },
                     ]}
                   >
                     <Input
@@ -221,7 +221,7 @@ const handleFormSubmit = async () => {
                         updated[index].branch = e.target.value;
                         setBranchInstances(updated);
                       }}
-                      placeholder="Branch Name"
+                      placeholder="Branch Unit"
                       size="large"
                       style={{
                         borderRadius: 8,

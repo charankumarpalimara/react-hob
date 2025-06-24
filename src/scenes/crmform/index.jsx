@@ -50,6 +50,8 @@ const CrmForm = () => {
   const [completedCrop, setCompletedCrop] = useState();
   const imgRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editValues, setEditValues] = useState({});
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
@@ -176,8 +178,8 @@ const CrmForm = () => {
     formData.append("mobile", values.PhoneNo || "");
     formData.append("email", values.email || "");
     formData.append("gender", values.gender || "");
-    formData.append("organization", values.organization || "");
-    formData.append("branch", values.branch || "");
+    // formData.append("organization", values.organization || "");
+    // formData.append("branch", values.branch || "");
     formData.append("country", values.country || "");
     formData.append("state", values.state || "");
     formData.append("city", values.city || "");
@@ -200,7 +202,7 @@ const CrmForm = () => {
       } catch (error) {
         console.error("Error converting image to blob:", error);
       }
-    } 
+    }
 
     try {
       const response = await axios.post(
@@ -234,15 +236,15 @@ const CrmForm = () => {
 
   const states = selectedCountry
     ? State.getStatesOfCountry(
-        countries.find((c) => c.name === selectedCountry)?.isoCode || ""
-      )
+      countries.find((c) => c.name === selectedCountry)?.isoCode || ""
+    )
     : [];
 
   const cities = selectedState
     ? City.getCitiesOfState(
-        countries.find((c) => c.name === selectedCountry)?.isoCode || "",
-        states.find((s) => s.name === selectedState)?.isoCode || ""
-      )
+      countries.find((c) => c.name === selectedCountry)?.isoCode || "",
+      states.find((s) => s.name === selectedState)?.isoCode || ""
+    )
     : [];
   const gender = ["Male", "Female"];
 
@@ -271,13 +273,114 @@ const CrmForm = () => {
               </div> */}
         </div>
       )}
+
+
+      <Modal
+        open={showEditModal}
+        title="Review & Edit CRM Details"
+        onCancel={() => setShowEditModal(false)}
+        onOk={() => handleFormSubmit(editValues)} // Pass the edited values to submit
+        okText="Update"
+        cancelText="Cancel"
+        confirmLoading={isLoading}
+        width={900}
+        // height={600}
+        okButtonProps={{
+          style: {
+            background: "#3e4396",
+            borderColor: "#3e4396",
+            color: "#fff",
+            fontWeight: "bold",
+          },
+        }}
+      >
+        <Form
+          layout="vertical"
+          initialValues={editValues}
+          onValuesChange={(_, allValues) => setEditValues(allValues)}
+        >
+          <Row gutter={24}>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="First Name" name="firstName" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="Last Name" name="lastName" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="Email" name="email" rules={[{ required: true, type: "email" }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+          </Row>
+          <Row gutter={24}>
+            <Col xs={24} md={8}>
+              <Form.Item label="Phone Code" name="phoneCode" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="Phone Number" name="PhoneNo" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
+                <Select>
+                  <Option value="Male">Male</Option>
+                  <Option value="Female">Female</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={24}>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="Country" name="country" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="State" name="state" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Form.Item label="City" name="city" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* <Row gutter={24}></Row> */}
+          <Col xs={24} md={8}>
+            <Form.Item label="Postal Code" name="postcode" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+        </Form>
+      </Modal>
       <div
         style={{ background: "#fff", borderRadius: 8, padding: 24, margin: 16 }}
       >
         <Form
           form={form}
           layout="vertical"
-          onFinish={handleFormSubmit}
+          onFinish={(values) => {
+            setEditValues(values);      // <-- set the values to show in modal
+            setShowEditModal(true);     // <-- open the modal
+          }}
           initialValues={{
             firstName: "",
             lastName: "",
@@ -461,52 +564,7 @@ const CrmForm = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xs={24} md={8}>
-              <Form.Item
-                label={<b>Organization</b>}
-                name="organization"
-                rules={[
-                  { required: true, message: "Organization is required" },
-                ]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Select Organization"
-                  size="large"
-                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
-                  onChange={async (value) => {
-                    form.setFieldsValue({ organization: value, branch: "" });
-                    await fetchBranch(value);
-                  }}
-                >
-                  {organizationNames.map((org) => (
-                    <Option key={org} value={org}>
-                      {org}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={8}>
-              <Form.Item
-                label={<b>Branch</b>}
-                name="branch"
-                rules={[{ required: true, message: "Branch is required" }]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Select Branch"
-                  size="large"
-                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
-                >
-                {branchNames.map((item, idx) => (
-                  <Select.Option key={idx} value={item.branch}>
-                    {item.branch}
-                  </Select.Option>
-                ))}
-                </Select>
-              </Form.Item>
-            </Col>
+
             <Col xs={24} md={8}>
               <Form.Item
                 label={<b>Country</b>}

@@ -1,13 +1,12 @@
 import {
   Box,
   useMediaQuery,
-  Typography,
-  Button,
   useTheme,
   TextField,
   Autocomplete,
   IconButton,
   Modal,
+   Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography
 } from "@mui/material";
 import {
   Form,
@@ -82,6 +81,7 @@ const TicketDetails = () => {
   const [deletingTaskId, setDeletingTaskId] = useState(null);
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [completeTaskId, setCompleteTaskId] = useState(null);
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const getExperienceColor = (experience) => {
     switch (experience) {
@@ -228,6 +228,7 @@ const TicketDetails = () => {
     }
   }, [form, crmidValue]);
 
+
   const fetchTasks = useCallback(async () => {
     try {
       const response = await fetch(
@@ -249,6 +250,9 @@ const TicketDetails = () => {
       setTasks([]);
     }
   }, [ticket.experienceid, ticket.crmid]);
+
+
+
 
   useEffect(() => {
     if (!ticket.experienceid || !ticket.crmid) return;
@@ -460,32 +464,32 @@ const handleDownload = async () => {
     fetchMessages();
   }, [ticket.experienceid, ticket.crmid]);
 
-  useEffect(() => {
-    const sendProcessingStatus = async () => {
-      const msgData = {
-        experienceid: ticket.experienceid,
-        status: "Processing",
-      };
+  // useEffect(() => {
+  //   const sendProcessingStatus = async () => {
+  //     const msgData = {
+  //       experienceid: ticket.experienceid,
+  //       status: "Processing",
+  //     };
 
-      try {
-        await fetch(
-          `${process.env.REACT_APP_API_URL}/v1/updateExperienceStatus`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(msgData),
-          }
-        );
-      } catch (error) {
-        console.error("Error sending message:", error);
-        message.error("Failed to send message.");
-      }
-    };
+  //     try {
+  //       await fetch(
+  //         `${process.env.REACT_APP_API_URL}/v1/updateExperienceStatus`,
+  //         {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify(msgData),
+  //         }
+  //       );
+  //     } catch (error) {
+  //       console.error("Error sending message:", error);
+  //       message.error("Failed to send message.");
+  //     }
+  //   };
 
-    if (ticket.experienceid) {
-      sendProcessingStatus();
-    }
-  }, [ticket.experienceid]);
+  //   if (ticket.experienceid) {
+  //     sendProcessingStatus();
+  //   }
+  // }, [ticket.experienceid]);
 
   const createtaskmodel = {
     position: "absolute",
@@ -516,7 +520,7 @@ const handleDownload = async () => {
   };
 
   const handleRowClick = (params) => {
-    Navigate("/crm/taskdetails", { state: { ticket: params.row } });
+    Navigate("/hob/taskdetails", { state: { ticket: params.row } });
   };
 
   // const handleCompleteTask = (id) => (event) => {
@@ -570,6 +574,28 @@ const handleDownload = async () => {
     setCompleteModalVisible(false);
     setCompleteTaskId(null);
   };
+
+
+const handleCloseExperience = async () => {
+  try {
+    await fetch(
+      `${process.env.REACT_APP_API_URL}/v1/updateExperienceStatusToResolve`,
+      //  `http://127.0.0.1:8080/v1/updateExperienceStatusToResolve`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          experienceid: ticket.experienceid,
+          status: "Resolved",
+        }),
+      }
+    );
+    message.success("Experience status updated to Resolved!");
+    Navigate("/hob");
+  } catch (error) {
+    message.error("Failed to update status.");
+  }
+}
 
   const TaskForm = ({ handleClose, fetchTasks }) => {
     const [taskForm] = Form.useForm();
@@ -1137,47 +1163,50 @@ const handleDownload = async () => {
                     mt: 1,
                   }}
                 >
-                  <Button
-                    variant="contained"
-                    sx={{
-                      padding: "12px 24px",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                      borderRadius: "8px",
-                      boxShadow: "3px 3px 6px rgba(0, 0, 0, 0.2)",
-                      transition: "0.3s",
-                      backgroundColor: colors.redAccent[400],
-                      color: "#ffffff",
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: colors.redAccent[500],
-                        boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-                      },
-                    }}
-                    onClick={async () => {
-                      try {
-                        await fetch(
-                          `${process.env.REACT_APP_API_URL}/v1/updateExperienceStatusToResolve`,
-                          {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                              experienceid: ticket.experienceid,
-                              status: "Resolved",
-                            }),
-                          }
-                        );
-                        message.success(
-                          "Experience status updated to Resolved!"
-                        );
-                        Navigate("/crm");
-                      } catch (error) {
-                        message.error("Failed to update status.");
-                      }
-                    }}
-                  >
-                    Close
-                  </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  padding: "12px 24px",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                  boxShadow: "3px 3px 6px rgba(0, 0, 0, 0.2)",
+                  transition: "0.3s",
+                  backgroundColor: colors.redAccent[400],
+                  color: "#ffffff",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: colors.redAccent[500],
+                    boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                  },
+                }}
+                onClick={() => setOpenConfirm(true)}
+              >
+                Close
+              </Button>
+
+
+            <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
+              <DialogTitle>Are you sure?</DialogTitle>
+              <DialogContent>
+                <Typography>Are you sure you want to close this experience?</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenConfirm(false)} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    setOpenConfirm(false);
+                    await handleCloseExperience();
+                  }}
+                  color="error"
+                  variant="contained"
+                >
+                  Yes, Close
+                </Button>
+              </DialogActions>
+            </Dialog>
 
                   {isEditing ? (
                     <Box sx={{ display: "flex", gap: 2 }}>

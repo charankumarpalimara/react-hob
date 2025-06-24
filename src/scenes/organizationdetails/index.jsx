@@ -216,7 +216,7 @@ const OrganizationDetails = () => {
                       style={{ marginBottom: 12 }}
                     />
                   </Col>
-                  <Col xs={24} md={8}>
+                  <Col xs={24} md={8} style={{ display: "none" }}>
                     <Typography.Text strong>Branch Type</Typography.Text>
                     <Select
                       value={editData.branchtype}
@@ -232,13 +232,13 @@ const OrganizationDetails = () => {
                     </Select>
                   </Col>
                   <Col xs={24} md={8}>
-                    <Typography.Text strong>Branch Name</Typography.Text>
+                    <Typography.Text strong>Branch Unit</Typography.Text>
                     <Input
                       value={editData.branch}
                       onChange={(e) =>
                         handleBranchInputChange("branch", e.target.value)
                       }
-                      placeholder="Branch Name"
+                      placeholder="Branch Unit"
                       size="large"
                       disabled={!isEditing}
                       style={{ marginBottom: 12 }}
@@ -421,7 +421,7 @@ const OrganizationDetails = () => {
             fontWeight: "bold",
           }}
         >
-          Create New Branch
+          Add New Unit
         </Button>
       </Box>
     </>

@@ -208,7 +208,7 @@ const CrmDetails = () => {
     }
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/v1/UpdatecrmProfileDetailsByitsSelf`,
+       `${process.env.REACT_APP_API_URL}/v1/UpdatecrmProfileByAdminAndHob`,
         // "http://127.0.0.1:8080/v1/UpdatecrmProfileDetailsByitsSelf",
         {
           method: "POST",
@@ -275,8 +275,8 @@ const CrmDetails = () => {
   const fetchCmNames = async (orgName, branch) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
-        // "http://127.0.0.1:8080/v1/GetCmNames",
+        // `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
+        "http://127.0.0.1:8080/v1/GetCmNames",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -822,7 +822,7 @@ const CrmDetails = () => {
                         </Col>
                         <Col xs={24} md={8}>
                           <Form.Item
-                            label={<Text strong>Branch</Text>}
+                            label={<Text strong> Organization Unit</Text>}
                             style={{ marginBottom: 0 }}
                           >
                             <Input
@@ -965,13 +965,13 @@ const CrmDetails = () => {
               </Col>
               <Col xs={24} md={8}>
                 <Form.Item
-                  label={<Text strong>Branch</Text>}
+                  label={<Text strong> Organization Unit</Text>}
                   name="branch"
-                  rules={[{ required: true, message: "Branch is required" }]}
+                  rules={[{ required: true, message: " Organization Unit is required" }]}
                 >
                   <Select
                     showSearch
-                    placeholder="Select Branch"
+                    placeholder="Select Organization Unit"
                     size="large"
                     style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
                     onChange={async (value) => {
@@ -1054,7 +1054,7 @@ const CrmDetails = () => {
               fontWeight: "bold",
             }}
           >
-            Create New Branch
+            Add Customer Manager
           </Button>
         )}
         {/* Form Actions moved outside the Form to keep buttons always enabled */}
