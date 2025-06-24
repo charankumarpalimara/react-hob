@@ -460,32 +460,32 @@ const handleDownload = async () => {
     fetchMessages();
   }, [ticket.experienceid, ticket.crmid]);
 
-  useEffect(() => {
-    const sendProcessingStatus = async () => {
-      const msgData = {
-        experienceid: ticket.experienceid,
-        status: "Processing",
-      };
+  // useEffect(() => {
+  //   const sendProcessingStatus = async () => {
+  //     const msgData = {
+  //       experienceid: ticket.experienceid,
+  //       status: "Processing",
+  //     };
 
-      try {
-        await fetch(
-          `${process.env.REACT_APP_API_URL}/v1/updateExperienceStatus`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(msgData),
-          }
-        );
-      } catch (error) {
-        console.error("Error sending message:", error);
-        message.error("Failed to send message.");
-      }
-    };
+  //     try {
+  //       await fetch(
+  //         `${process.env.REACT_APP_API_URL}/v1/updateExperienceStatus`,
+  //         {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify(msgData),
+  //         }
+  //       );
+  //     } catch (error) {
+  //       console.error("Error sending message:", error);
+  //       message.error("Failed to send message.");
+  //     }
+  //   };
 
-    if (ticket.experienceid) {
-      sendProcessingStatus();
-    }
-  }, [ticket.experienceid]);
+  //   if (ticket.experienceid) {
+  //     sendProcessingStatus();
+  //   }
+  // }, [ticket.experienceid]);
 
   const createtaskmodel = {
     position: "absolute",
