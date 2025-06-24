@@ -4,60 +4,54 @@ import {
   Button,
   Container,
   Grid,
-  TextField,
+  // TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Row, Col, Form, Input, message, Card } from "antd";
 import Logo from "./logo.png";
 
+
+// const { Title } = Typography;
+
 const Login = ({ onLogin }) => {
+    const [form] = Form.useForm();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (!email || !password) {
-      setError("Please enter both email and password");
-      return;
-    }
-
+  const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/v1/hobLogin`,
-        // `http://127.0.0.1:8080/v1/hobLogin`,
+        // `${process.env.REACT_APP_API_URL}/v1/hobLogin`,
+            `http://127.0.0.1:8080/v1/hobLogin`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
         }
       );
-
       const data = await response.json();
-
-      console.log("Response:", response);
-      console.log("Response Data:", data);
 
       if (response.ok) {
         onLogin();
-        sessionStorage.setItem("token", data.token); // Save the authentication token
-        sessionStorage.setItem("hobDetails", JSON.stringify(data.data)); // Save all user details in sessionStorage
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("hobDetails", JSON.stringify(data.data));
         navigate("/hob");
       } else {
-        setError(data.error || "Invalid credentials");
+        message.error(data.error || "Invalid credentials");
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      setError("Something went wrong. Please try again later.");
+      message.error("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,28 +115,45 @@ const Login = ({ onLogin }) => {
               </Typography>
             )}
 
-            <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Email address"
-                type="email"
-                variant="outlined"
-                margin="normal"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{ mb: 2 }}
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            autoComplete="off"
+          >
+      <Form.Item
+              label="Email address"
+              name="email"
+              rules={[
+                { required: true, message: "Please enter your email" },
+                { type: "email", message: "Enter a valid email address" },
+              ]}
+            >
+              <Input
+                size="large"
+                placeholder="Enter your email"
+                style={{
+                  borderRadius: 8,
+                  fontSize: 16,
+                  padding: "10px 14px",
+                }}
               />
-
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                variant="outlined"
-                margin="normal"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{ mb: 2 }}
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[{ required: true, message: "Please enter your password" }]}
+            >
+              <Input.Password
+                size="large"
+                placeholder="Enter your password"
+                style={{
+                  borderRadius: 8,
+                  fontSize: 16,
+                  padding: "10px 14px",
+                }}
               />
+            </Form.Item>
 
               <Box textAlign="center" pt={1} mb={2} pb={1}>
                 <Button
@@ -165,7 +176,7 @@ const Login = ({ onLogin }) => {
                   Sign in
                 </Button>
               </Box>
-            </form>
+               </Form>
           </Box>
         </Grid>
       </Grid>
