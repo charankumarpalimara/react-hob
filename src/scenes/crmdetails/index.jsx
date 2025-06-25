@@ -275,8 +275,8 @@ const CrmDetails = () => {
   const fetchCmNames = async (orgName, branch) => {
     try {
       const response = await fetch(
-        // `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
-        "http://127.0.0.1:8080/v1/GetCmNames",
+        `${process.env.REACT_APP_API_URL}/v1/GetCmNames`,
+        // "http://127.0.0.1:8080/v1/GetCmNames",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -329,7 +329,7 @@ const CrmDetails = () => {
         formData.append(key, value);
       });
 
-      const response = await fetch("http://127.0.0.1:8080/v1/createRelation", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/v1/createRelation`, {
         method: "POST",
         body: formData,
       });
