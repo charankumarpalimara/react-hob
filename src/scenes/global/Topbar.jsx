@@ -56,6 +56,7 @@ const getActivePage = (pathname) => {
     return "/hob/organization";
   } else if (
     pathname === "/hob" ||
+     pathname === "/hob/" ||
     pathname.includes("/hob/ticketdetails") ||
     pathname.includes("/hob/allExperiences") ||
     pathname.includes("/hob/newExperiences") ||
@@ -65,7 +66,8 @@ const getActivePage = (pathname) => {
     pathname.includes("/hob/resolvedExperiences")
   ) {
     return "/hob"; // Dashboard is active for these routes
-  } else {
+  }
+   else {
     return pathname;
   }
 };

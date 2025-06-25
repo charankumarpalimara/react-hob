@@ -83,7 +83,7 @@ const TicketDetails = () => {
   const [completeTaskId, setCompleteTaskId] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const getExperienceColor = (experience) => {
+    const getExperienceColor = (experience) => {
     switch (experience) {
       case "Frustrated":
         return "#E64A19";
@@ -639,6 +639,9 @@ const handleCloseExperience = async () => {
       setLoading(false);
     };
 
+
+
+
     return (
       <Form
         form={taskForm}
@@ -857,6 +860,9 @@ const handleCloseExperience = async () => {
   //   "Closed",
   // ];
 
+
+
+
   return (
     <Box
       sx={{
@@ -1034,9 +1040,7 @@ const handleCloseExperience = async () => {
                     >
                       Priority
                     </Typography>
-                    <Typography
-                      sx={{ color: getExperienceColor(values.priority) }}
-                    >
+                    <Typography >
                       {values.priority}
                     </Typography>
                   </Box>
@@ -1049,9 +1053,7 @@ const handleCloseExperience = async () => {
                   >
                     Status
                   </Typography>
-                  <Typography
-                    sx={{ color: getExperienceColor(values.priority) }}
-                  >
+                  <Typography >
                     {values.status}
                   </Typography>
                 </Box>
@@ -1076,19 +1078,19 @@ const handleCloseExperience = async () => {
                   <Typography>{values.time}</Typography>
                 </Box>
 
-                <Box>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ color: "#555", fontWeight: "bold" }}
-                  >
-                    Experience
-                  </Typography>
-                  <Typography
-                    sx={{ color: getExperienceColor(values.experience) }}
-                  >
-                    {values.experience}
-                  </Typography>
-                </Box>
+                  <Box>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: "#555", fontWeight: "bold" }}
+                    >
+                      Experience
+                    </Typography>
+                    <Typography
+                     sx={{ color: getExperienceColor(values.experience) }}
+                    >
+                      {values.experience}
+                    </Typography>
+                  </Box>
 
                 <Box>
                   <Typography
