@@ -123,7 +123,7 @@ const Topbar = ({ onLogout }) => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const userDetails = JSON.parse(sessionStorage.getItem("userDetails")) || {}; // Retrieve user details from sessionStorage
+  const userDetails = JSON.parse(sessionStorage.getItem("hobDetails")) || {}; // Retrieve user details from sessionStorage
 
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -163,7 +163,8 @@ const Topbar = ({ onLogout }) => {
     switch (location.pathname) {
       case "/hob":
         return "Dashboard";
-
+      case "/hob/":
+        return "Dashboard";
       case "/hob/cm":
         return "Customer Manager";
 
@@ -242,6 +243,8 @@ const Topbar = ({ onLogout }) => {
   const getPageTitle1 = () => {
     switch (location.pathname) {
       case "/hob":
+        return { primaryTitle: "Dashboard", secondaryTitle: null };
+      case "/hob/":
         return { primaryTitle: "Dashboard", secondaryTitle: null };
       case "/hob/cm":
         return { primaryTitle: "Customer Manager", secondaryTitle: null };
