@@ -48,6 +48,7 @@ import PendingExperiences from "./scenes/experiences/pendingExperiences";
 import ResolvedExperiences from "./scenes/experiences/resolvedExperiences";
 import TaskDetails from "./scenes/taskdetails";
 import PasswordReset from "./scenes/login/passwordReset";
+import ForgotPassword from "./scenes/login/forgotPassword";
 
 // const SOCKET_URL =
 //   process.env.REACT_APP_SOCKET_URL ||
@@ -186,6 +187,7 @@ function App() {
             {!isAuthenticated ? (
               <>
               <Route path="*" element={<Login onLogin={handleLogin} />} />
+              <Route path='/hob/forgot-password' element={<ForgotPassword />} />
               </>
             ) : (
               <>

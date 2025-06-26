@@ -14,7 +14,7 @@ import { Row, Col, Form, Input, message, Card } from "antd";
 import Logo from "./logo.png";
 
 
-// const { Title } = Typography;
+const { Title } = Typography;
 
 const Login = ({ onLogin }) => {
     const [form] = Form.useForm();
@@ -154,6 +154,16 @@ const Login = ({ onLogin }) => {
                 }}
               />
             </Form.Item>
+              <Box textAlign="right" mb={2}>
+                <Button
+                  variant="text"
+                  size="small"
+                  sx={{ textTransform: "none", color: "#3e4396", fontWeight: "bold" }}
+                  onClick={() => navigate("/hob/forgot-password")}
+                >
+                  Forgot Password?
+                </Button>
+              </Box>
 
               <Box textAlign="center" pt={1} mb={2} pb={1}>
                 <Button
