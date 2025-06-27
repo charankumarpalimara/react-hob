@@ -239,7 +239,7 @@ const OrganizationForm = () => {
         onCancel={() => setShowEditModal(false)}
         closable={false}
         footer={null}
-        width={900}
+        width={1000}
         okButtonProps={{
           style: {
             background: "#3e4396",
