@@ -1094,10 +1094,8 @@ const TicketDetails = () => {
                     Experience
                   </Typography>
                   <Typography
-                    sx={{
-                      // color:" #E64A19"
- 
-                    }}
+
+                    sx={{ color: getExperienceColor(values.experience) }}
                   >
                     {values.experience}
                   </Typography>
