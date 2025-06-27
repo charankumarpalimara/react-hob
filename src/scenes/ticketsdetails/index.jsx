@@ -324,36 +324,36 @@ const TicketDetails = () => {
   });
 
 
-  const fileUrl = ticket.imageUrl || ""; // your file URL
-  const filename = fileUrl.split("/").pop() || "attachment";
+const fileUrl = ticket.imageUrl || ""; // your file URL
+const filename = fileUrl.split("/").pop() || "attachment";
 
-  const handleDownload = async (fileUrl) => {
-    if (!fileUrl) {
-      message.error("No attachment available.");
-      return;
+const handleDownload = async (fileUrl) => {
+  if (!fileUrl) {
+    message.error("No attachment available.");
+    return;
+  }
+  setIsDownloading(true);
+  try {
+    const response = await fetch(fileUrl);
+    if (!response.ok) {
+      throw new Error("File not found or server error");
     }
-    setIsDownloading(true);
-    try {
-      const response = await fetch(fileUrl);
-      if (!response.ok) {
-        throw new Error("File not found or server error");
-      }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Download failed:", error);
-      message.error("Download failed. Please try again or contact support.");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download failed:", error);
+    message.error("Download failed. Please try again or contact support.");
+  } finally {
+    setIsDownloading(false);
+  }
+};
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
