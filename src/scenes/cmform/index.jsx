@@ -38,7 +38,7 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
 
 const CmForm = () => {
   const [form] = Form.useForm();
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   // const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [originalImage, setOriginalImage] = useState(null);
@@ -53,10 +53,15 @@ const CmForm = () => {
   const [crmNameList, setCrmNameList] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editValues, setEditValues] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [originalEditValues, setOriginalEditValues] = useState({});
+  const [createdCmId, setCreatedCmId] = useState(null);
+  const [modalOrganizationNames, setModalOrganizationNames] = useState([]);
+  const [modalBranchNames, setModalBranchNames] = useState([]);
 
   //  const ticket = useMemo(() => location.state?.ticket || {}, [location.state]);
   useEffect(() => {
-    const fetchTickets = async () => {
+    const fetchOrganizations = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/v1/getAllOrganizationnames`
@@ -64,15 +69,38 @@ const CmForm = () => {
         );
         const data = await response.json();
         if (response.ok && Array.isArray(data.data)) {
+          setModalOrganizationNames(data.data.map((item) => item.organizationname || "N/A"));
           setOrganizationNames(
             data.data.map((item) => item.organizationname || "N/A")
           );
         }
       } catch (error) { }
     };
-    fetchTickets();
+    fetchOrganizations();
   }, []);
   // const crmidValue = form.getFieldValue("crmid");
+
+
+  const fetchBranch = async (orgName) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/v1/getBranchbyOrganizationname/${orgName}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.branchDetails)) {
+          setBranchNames(data.branchDetails);
+          setModalBranchNames(data.branchDetails);
+        } else if (typeof data.branchDetails === "string") {
+          setBranchNames([data.branchDetails]);
+          setModalBranchNames([data.branchDetails]);
+        } else {
+          setBranchNames([]);
+          setModalBranchNames([]);
+        }
+      }
+    } catch (error) { }
+  };
 
   useEffect(() => {
     const fetchCrmNames = async () => {
@@ -98,23 +126,7 @@ const CmForm = () => {
   // }, []);
 
 
-  const fetchBranch = async (orgName) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/v1/getBranchbyOrganizationname/${orgName}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        if (Array.isArray(data.branchDetails)) {
-          setBranchNames(data.branchDetails);
-        } else if (typeof data.branchDetails === "string") {
-          setBranchNames([data.branchDetails]);
-        } else {
-          setBranchNames([]);
-        }
-      }
-    } catch (error) { }
-  };
+
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -227,7 +239,7 @@ const CmForm = () => {
       }
     }
     try {
-      await axios.post(
+      const responce = await axios.post(
         `${process.env.REACT_APP_API_URL}/v1/createCm`,
         // `http://127.0.0.1:8080/v1/createCm`,
         formData,
@@ -237,17 +249,100 @@ const CmForm = () => {
       );
       // Modal.success({ content: "CM Registered Successfully!" });
       message.success("CM Registered Successfully!");
-      Navigate("/hob/cm"); // Redirect to CM List page
+      const cmData = responce.data.data || {};
+      const FinalCmid = responce.data.cmid || cmData.cmid;
 
-      form.resetFields();
-      setProfileImage(null);
-      setOriginalImage(null);
+      message.success("CM Registered Successfully!");
+      setEditValues({ ...values, profileImage, cmid: FinalCmid }); // <-- set modal values
+      setCreatedCmId(FinalCmid);
+      setOriginalEditValues({ ...values, profileImage });
+      setShowEditModal(true); // <-- open modal
+      setIsEditMode(false);
+      setIsLoading(false);
     } catch (error) {
       // Modal.error({ content: "Error submitting form" });
       message.error("Error submitting form");
     } finally {
       setIsLoading(false);
     }
+  };
+
+
+  // Actually submit to backend
+  const handleUpdate = async () => {
+    setIsLoading(true);
+    const values = editValues;
+    const formData = new FormData();
+    formData.append("cmid", createdCmId);
+    formData.append("firstname", values.firstName || "");
+    formData.append("lastname", values.lastName || "");
+    formData.append("phonecode", values.phoneCode || "");
+    formData.append("mobile", values.PhoneNo || "");
+    formData.append("email", values.email || "");
+    formData.append("gender", values.gender || "");
+    formData.append("designation", values.designation || "");
+    formData.append("organization", values.organization || "");
+    formData.append("branch", values.branch || "");
+    formData.append("username", values.email || "");
+
+    formData.append("crmId", values.crmid || "");
+    formData.append("crmName", values.crmname || "");
+    // const createrrole = getCreaterRole() || "";
+    const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
+    const createrrole = "hob";
+    const createrid = sessionData?.hobid || "";
+    const password = (values.firstName || "") + (values.PhoneNo || "");
+    formData.append("createrrole", createrrole);
+    formData.append("createrid", createrid);
+    formData.append("passwords", password);
+
+    if (values.profileImage) {
+      try {
+        let blob;
+        if (values.profileImage.startsWith("data:")) {
+          const res = await fetch(values.profileImage);
+          blob = await res.blob();
+        } else {
+          blob = values.profileImage;
+        }
+        formData.append("cmimage", blob, "profileImage.jpg");
+      } catch (error) {
+        console.error("Error converting image to blob:", error);
+      }
+    }
+
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/v1/UpdateCm`,
+        // `http://127.0.0.1:8080/v1/updateCm`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      message.success("CM Registered Successfully!");
+      form.resetFields();
+      setProfileImage(null);
+      setOriginalImage(null);
+      setShowEditModal(false);
+      setIsLoading(false);
+      navigate(-1);
+    } catch (error) {
+      message.error("Error submitting form!");
+      setIsLoading(false);
+    }
+  };
+
+  // Cancel editing in modal
+  const handleCancelEdit = () => {
+    setEditValues(originalEditValues);
+    setIsEditMode(false);
+  };
+
+  // Close modal
+  const handleModalClose = () => {
+    setShowEditModal(false);
+    navigate(-1); // Go to previous page
   };
 
   const countries = Country.getAllCountries();
@@ -279,99 +374,205 @@ const CmForm = () => {
         </div>
       )}
 
+
       <Modal
         open={showEditModal}
         title="Review & Edit CM Details"
-        onCancel={() => setShowEditModal(false)}
-        onOk={() => handleFormSubmit(editValues)} // Pass the edited values to submit
-        okText="Update"
-        cancelText="Cancel"
-        confirmLoading={isLoading}
-        width={900}
-        okButtonProps={{
-          style: {
-            background: "#3e4396",
-            borderColor: "#3e4396",
-            color: "#fff",
-            fontWeight: "bold",
-          },
-        }}
+        onCancel={handleModalClose}
+        closable={false}
+        footer={null}
+        width="80%"
       >
         <Form
           layout="vertical"
           initialValues={editValues}
-          onValuesChange={(_, allValues) => setEditValues(allValues)}
+          onValuesChange={(_, allValues) => setEditValues({ ...editValues, ...allValues })}
         >
+          <Row justify="center" style={{ marginBottom: 24 }}>
+            <Col>
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <Avatar
+                  src={editValues.profileImage || "https://via.placeholder.com/150"}
+                  size={120}
+                  style={{
+                    border: "2px solid #1677ff",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  }}
+                />
+              </div>
+            </Col>
+          </Row>
           <Row gutter={24}>
-
             <Col xs={24} md={8}>
               <Form.Item label="First Name" name="firstName" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Last Name" name="lastName" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Email" name="email" rules={[{ required: true, type: "email" }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
           </Row>
-
           <Row gutter={24}>
             <Col xs={24} md={8}>
               <Form.Item label="Phone Code" name="phoneCode" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Phone Number" name="PhoneNo" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
-                <Select>
+                <Select disabled={!isEditMode}>
                   <Option value="Male">Male</Option>
                   <Option value="Female">Female</Option>
                 </Select>
               </Form.Item>
             </Col>
-
           </Row>
           <Row gutter={24}>
-
+            {/* <Col xs={24} md={8}>
+              <Form.Item label="Designation" name="designation" rules={[{ required: true }]}>
+                <Input disabled={!isEditMode} />
+              </Form.Item>
+            </Col> */}
             <Col xs={24} md={8}>
-              <Form.Item label="Organization" name="organization" rules={[{ required: true }]}>
-                <Input />
+              <Form.Item
+                label="Organization"
+                name="organization"
+                rules={[{ required: true, message: "Organization is required" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select Organization"
+                  onChange={async (value) => {
+                    form.setFieldsValue({ organization: value, branch: "" });
+                    await fetchBranch(value);
+                  }}
+                  disabled={!isEditMode}
+                >
+                  {modalOrganizationNames.map((org) => (
+                    <Select.Option key={org} value={org}>
+                      {org}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
-              <Form.Item label="Organization Unit" name="branch" rules={[{ required: true }]}>
-                <Input />
+              <Form.Item
+                label="Organization Unit"
+                name="branch"
+                rules={[{ required: true, message: "Organization Unit is required" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select Organization Unit"
+                  disabled={!isEditMode}
+                >
+                  {modalBranchNames.map((item, idx) => (
+                    <Select.Option key={idx} value={item.branch}>
+                      {item.branch}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
-              <Form.Item label="CRM Name" name="crmname" rules={[{ required: true }]}>
-                <Input />
+              <Form.Item
+                label="CRM Name"
+                name="crmname"
+                rules={[{ required: true, message: "CRM Name is required" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select CRM Name"
+                  optionFilterProp="children"
+                  disabled={!isEditMode}
+                  onChange={(value) => {
+                    const selected = crmNameList.find(crm => crm.crmid === value);
+                    // Set both crmname and crmid in the form and in editValues
+                    setEditValues((prev) => ({
+                      ...prev,
+                      crmname: selected ? selected.name : "",
+                      crmid: value,
+                    }));
+                  }}
+                  value={editValues.crmid}
+                >
+                  {crmNameList.map((crm) => (
+                    <Select.Option key={crm.crmid} value={crm.crmid}>
+                      {crm.name} ({crm.crmid})
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item label="CRM ID" name="crmid" style={{ display: "none" }}>
+                <Input disabled />
               </Form.Item>
             </Col>
-
           </Row>
-          <Form.Item label="CRM Id" name="crmid" style={{ display: "none" }} rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
 
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>
+            {!isEditMode ? (
+              <>
+                <Button
+                  type="primary"
+                  onClick={() => setIsEditMode(true)}
+                  style={{
+                    background: "#3e4396",
+                    borderColor: "#3e4396",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    minWidth: 120,
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  style={{ marginLeft: 12 }}
+                  onClick={handleModalClose}
+                  danger
+                >
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="primary"
+                  onClick={handleUpdate}
+                  loading={isLoading}
+                  style={{
+                    background: "#3e4396",
+                    borderColor: "#3e4396",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    minWidth: 120,
+                  }}
+                >
+                  Update
+                </Button>
+                <Button
+                  style={{ marginLeft: 12 }}
+                  onClick={handleCancelEdit}
+                  danger
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
+          </div>
         </Form>
       </Modal>
 
@@ -385,9 +586,8 @@ const CmForm = () => {
         <Form
           form={form}
           layout="vertical"
-          onFinish={(values) => {
-            setEditValues(values);      // <-- set the values to show in modal
-            setShowEditModal(true);     // <-- open the modal
+          onFinish={(values) => {    // <-- open the modal
+            handleFormSubmit(values);
           }}
           initialValues={{
             firstName: "",
@@ -656,9 +856,9 @@ const CmForm = () => {
                 </Select>
               </Form.Item>
               <Form.Item label="CRM ID" name="crmid" style={{ display: "none" }}>
-              <Form.Item label="CRM ID" name="crmid" style={{ display: "none" }}>
+                {/* <Form.Item label="CRM ID" name="crmid" style={{ display: "none" }}> */}
                 <Input disabled />
-              </Form.Item>
+                {/* </Form.Item> */}
               </Form.Item>
             </Col>
           </Row>

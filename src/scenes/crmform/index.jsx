@@ -42,7 +42,7 @@ const CrmForm = () => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
   // const [selectedCity, setSelectedCity] = useState('');
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(null);
   const [originalImage, setOriginalImage] = useState(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -52,6 +52,9 @@ const CrmForm = () => {
   const fileInputRef = useRef(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editValues, setEditValues] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [originalEditValues, setOriginalEditValues] = useState({});
+  const [createdCrmId, setCreatedCrmId] = useState(null);
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
@@ -206,8 +209,8 @@ const CrmForm = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/v1/createcrm`,
-        //  `http://127.0.0.1:8080/v1/createcrm`,
+        // `${process.env.REACT_APP_API_URL}/v1/createcrm`,
+        `http://127.0.0.1:8080/v1/createCrm`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -218,9 +221,18 @@ const CrmForm = () => {
         response.data &&
         response.data.message === "User registered successfully"
       ) {
+        const crmData = response.data.data || {};
+        const FinalCrmid = response.data.crmid || crmData.crmid;
         // Modal.success({ content: "CRM Registered Successfully!" });
         message.success("CRM Registered Successfully!");
-        Navigate("/hob/crm");
+        setEditValues({ ...values, profileImage, crmid: FinalCrmid }); // <-- set modal values
+        setCreatedCrmId(FinalCrmid);
+        setOriginalEditValues({ ...values, profileImage });
+        setShowEditModal(true); // <-- open modal
+        setIsEditMode(false);
+        setIsLoading(false);
+        console.log("CRM created with ID:", FinalCrmid);
+        // Navigate("/hob/crm");
       } else {
         Modal.error({
           content: response.data?.error || "Error submitting form",
@@ -232,6 +244,97 @@ const CrmForm = () => {
       setIsLoading(false);
     }
   };
+
+
+
+
+  const handleUpdate = async () => {
+    const values = editValues;
+    setIsLoading(true);
+    const formData = new FormData();
+    const sessionData = JSON.parse(sessionStorage.getItem("hobDetails"));
+    const createrrole = "hob";
+    const createrid = sessionData?.hobid || "";
+    const password = (values.firstName || "") + (values.PhoneNo || "");
+    formData.append("crmid", createdCrmId);
+    formData.append("firstname", values.firstName || "");
+    formData.append("lastname", values.lastName || "");
+    formData.append("phonecode", values.phoneCode || "");
+    formData.append("mobile", values.PhoneNo || "");
+    formData.append("email", values.email || "");
+    formData.append("gender", values.gender || "");
+    // formData.append("organization", values.organization || "");
+    // formData.append("branch", values.branch || "");
+    formData.append("country", values.country || "");
+    formData.append("state", values.state || "");
+    formData.append("city", values.city || "");
+    formData.append("username", values.email || "");
+    formData.append("passwords", password);
+    formData.append("createrrole", createrrole);
+    formData.append("createrid", createrid);
+    formData.append("postalcode", values.postcode || "");
+
+    if (profileImage) {
+      try {
+        let blob;
+        if (profileImage.startsWith("data:")) {
+          const res = await fetch(profileImage);
+          blob = await res.blob();
+        } else {
+          blob = profileImage;
+        }
+        formData.append("crmimage", blob, "profileImage.jpg");
+      } catch (error) {
+        console.error("Error converting image to blob:", error);
+      }
+    }
+
+    try {
+      const response = await axios.post(
+        // `${process.env.REACT_APP_API_URL}/v1/updateCrm`,
+         `http://127.0.0.1:8080/v1/updateCrm`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      if (
+        response.status === 200 &&
+        response.data.message === "User updated successfully"
+      ) {
+        // Modal.success({ content: "CRM Registered Successfully!" });
+        message.success("Details Updated Successfully!");
+        navigate("/hob/crm");
+      } else {
+        Modal.error({
+          content: response.data?.error || "Error submitting form",
+        });
+      }
+    } catch (error) {
+      Modal.error({ content: "Error submitting form" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+
+
+
+  const handleCancelEdit = () => {
+    setEditValues(originalEditValues);
+    setIsEditMode(false);
+  };
+
+  // Close modal
+  const handleModalClose = () => {
+    setShowEditModal(false);
+    navigate(-1); // Go to previous page
+  };
+
+
+
+
   const countries = Country.getAllCountries();
 
   const states = selectedCountry
@@ -277,98 +380,234 @@ const CrmForm = () => {
 
       <Modal
         open={showEditModal}
-        title="Review & Edit CRM Details"
-        onCancel={() => setShowEditModal(false)}
-        onOk={() => handleFormSubmit(editValues)} // Pass the edited values to submit
-        okText="Update"
-        cancelText="Cancel"
-        confirmLoading={isLoading}
-        width={900}
-        // height={600}
-        okButtonProps={{
-          style: {
-            background: "#3e4396",
-            borderColor: "#3e4396",
-            color: "#fff",
-            fontWeight: "bold",
-          },
-        }}
+        title="Review & Edit CM Details"
+        onCancel={handleModalClose}
+        closable={false}
+        footer={null}
+        width="80%"
       >
         <Form
           layout="vertical"
           initialValues={editValues}
-          onValuesChange={(_, allValues) => setEditValues(allValues)}
+          onValuesChange={(_, allValues) => setEditValues({ ...editValues, ...allValues })}
         >
+          <Row justify="center" style={{ marginBottom: 24 }}>
+            <Col>
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <Avatar
+                  src={editValues.profileImage || "https://via.placeholder.com/150"}
+                  size={120}
+                  style={{
+                    border: "2px solid #1677ff",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  }}
+                />
+              </div>
+            </Col>
+          </Row>
           <Row gutter={24}>
-
             <Col xs={24} md={8}>
               <Form.Item label="First Name" name="firstName" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Last Name" name="lastName" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Email" name="email" rules={[{ required: true, type: "email" }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
           </Row>
           <Row gutter={24}>
             <Col xs={24} md={8}>
               <Form.Item label="Phone Code" name="phoneCode" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
             <Col xs={24} md={8}>
               <Form.Item label="Phone Number" name="PhoneNo" rules={[{ required: true }]}>
-                <Input />
+                <Input disabled={!isEditMode} />
               </Form.Item>
             </Col>
-
-            <Col xs={24} md={8}>
+            {/* <Col xs={24} md={8}>
               <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
-                <Select>
+                <Select disabled={!isEditMode}>
                   <Option value="Male">Male</Option>
                   <Option value="Female">Female</Option>
                 </Select>
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
-
           <Row gutter={24}>
-
             <Col xs={24} md={8}>
-              <Form.Item label="Country" name="country" rules={[{ required: true }]}>
-                <Input />
+              <Form.Item
+                label={<b>Gender</b>}
+                name="gender"
+
+                rules={[{ required: true, message: "Gender is required" }]}
+              >
+                <Select
+                  placeholder="Select Gender"
+                  disabled={!isEditMode}
+                  // size="large"
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                >
+                  {gender.map((g) => (
+                    <Option key={g} value={g}>
+                      {g}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
 
             <Col xs={24} md={8}>
-              <Form.Item label="State" name="state" rules={[{ required: true }]}>
-                <Input />
+              <Form.Item
+                label={<b>Country</b>}
+                name="country"
+                rules={[{ required: true, message: "Country is required" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select Country"
+                  // size="large"
+                  disabled={!isEditMode}
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                  onChange={(value) => {
+                    setSelectedCountry(value);
+                    form.setFieldsValue({ state: "", city: "" });
+                  }}
+                >
+                  {countries.map((c) => (
+                    <Option key={c.isoCode} value={c.name}>
+                      {c.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={8}>
+              <Form.Item
+                label={<b>State</b>}
+                name="state"
+                rules={[{ required: true, message: "State is required" }]}
+              // disabled={!isEditMode} 
+              >
+                <Select
+                  showSearch
+                  placeholder="Select State"
+                  // size="large"
+
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                  onChange={(value) => {
+                    setSelectedState(value);
+                    form.setFieldsValue({ city: "" });
+                  }}
+                  disabled={!isEditMode || !selectedCountry}
+                >
+                  {states.map((s) => (
+                    <Option key={s.isoCode} value={s.name}>
+                      {s.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={8}>
+              <Form.Item
+                label={<b>City</b>}
+                name="city"
+                rules={[{ required: true, message: "City is required" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select City"
+                  // size="large"
+
+                  style={{ borderRadius: 8, background: "#fff", fontSize: 16 }}
+                  disabled={!isEditMode || !selectedState}
+                >
+                  {cities.map((city) => (
+                    <Option key={city.name} value={city.name}>
+                      {city.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={8}>
+              <Form.Item
+                label={<b>Postal Code</b>}
+                name="postcode"
+                rules={[{ required: true, message: "Postal Code is required" }]}
+              >
+                <Input
+                  placeholder="Postal Code"
+                  // size="large"
+                  disabled={!isEditMode}
+                  style={{ borderRadius: 8,  fontSize: 16 }}
+                />
               </Form.Item>
             </Col>
 
-            <Col xs={24} md={8}>
-              <Form.Item label="City" name="city" rules={[{ required: true }]}>
-                <Input />
-              </Form.Item>
-            </Col>
+
           </Row>
-          {/* <Row gutter={24}></Row> */}
-          <Col xs={24} md={8}>
-            <Form.Item label="Postal Code" name="postcode" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-          </Col>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>
+            {!isEditMode ? (
+              <>
+                <Button
+                  type="primary"
+                  onClick={() => setIsEditMode(true)}
+                  style={{
+                    background: "#3e4396",
+                    borderColor: "#3e4396",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    minWidth: 120,
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  style={{ marginLeft: 12 }}
+                  onClick={handleModalClose}
+                  danger
+                >
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="primary"
+                  onClick={handleUpdate}
+                  loading={isLoading}
+                  style={{
+                    background: "#3e4396",
+                    borderColor: "#3e4396",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    minWidth: 120,
+                  }}
+                >
+                  Update
+                </Button>
+                <Button
+                  style={{ marginLeft: 12 }}
+                  onClick={handleCancelEdit}
+                  danger
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
+          </div>
         </Form>
       </Modal>
       <div
@@ -377,9 +616,8 @@ const CrmForm = () => {
         <Form
           form={form}
           layout="vertical"
-          onFinish={(values) => {
-            setEditValues(values);      // <-- set the values to show in modal
-            setShowEditModal(true);     // <-- open the modal
+          onFinish={(values) => {    // <-- open the modal
+            handleFormSubmit(values);
           }}
           initialValues={{
             firstName: "",
