@@ -33,7 +33,7 @@ const ForgotPassword = () => {
       const data = await response.json();
       if (response.ok) {
         message.success("Password reset link sent to your email!");
-                navigate("/login"); // Redirect to login page
+        navigate("/hob/login"); // Redirect to login page
         form.resetFields();
       } else {
         message.error(data.error || "Failed to send reset link.");
