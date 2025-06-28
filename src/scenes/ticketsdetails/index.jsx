@@ -180,7 +180,6 @@ const TicketDetails = () => {
     experience: ticket.experience || "",
     branch: ticket.branch || "",
     priority: ticket.priority || "",
-    impact: ticket.impact || "",
     crmname: ticket.crmname || "",
     status: ticket.status || "",
     department: ticket.department || "",
@@ -191,8 +190,9 @@ const TicketDetails = () => {
     phoneCode: ticket.phoneCode || "",
     PhoneNo: ticket.PhoneNo || "",
     notes: ticket.notes || "",
+    impact: ticket.impact || "",
     id: ticket.experienceid || "",
-    imageURl: ticket.imageUrl || "",
+    imageUrl: ticket.imageUrl || "",
   };
 
   console.log("Ticket Details:", ticket);
@@ -322,7 +322,6 @@ const TicketDetails = () => {
       .required("Required"),
     notes: yup.string(),
   });
-
 
 const fileUrl = ticket.imageUrl || ""; // your file URL
 const filename = fileUrl.split("/").pop() || "attachment";

@@ -10,9 +10,11 @@ import {
 } from "@mui/material";
 import { Form, Input, message } from "antd";
 import Logo from "./logo.png";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [form] = Form.useForm();
+    const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState(false);
@@ -31,6 +33,7 @@ const ForgotPassword = () => {
       const data = await response.json();
       if (response.ok) {
         message.success("Password reset link sent to your email!");
+                navigate("/login"); // Redirect to login page
         form.resetFields();
       } else {
         message.error(data.error || "Failed to send reset link.");
